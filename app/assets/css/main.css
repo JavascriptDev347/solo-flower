@@ -1,0 +1,33 @@
+@import "tailwindcss";
+@import "./variables.css";
+@import "@nuxt/ui";
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap");
+
+@theme static {
+    --font-sans: "Inter", sans-serif;
+    --font-display: "Fraunces", serif;
+
+    /* Shukufa brend ranglari (skrinshotlardagi asl palitraga mos) */
+    --color-brand-cream: #efe3d1;
+    --color-brand-cream-dark: #e2d2b8;
+    --color-brand-maroon: #3d0f1e;
+    --color-brand-maroon-soft: #4d1626;
+    --color-brand-accent: #b8324a;
+    --color-brand-accent-dark: #8f2338;
+}
+
+html {
+    direction: ltr;
+    /* Brauzer/OS qorong'i rejimda ham forma va scrollbar kabi
+     tizim elementlarini yorug' holatda chizishi uchun: */
+    color-scheme: light;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: #ffffff;
+}
+
+.font-display {
+    font-family: var(--font-display);
+}
