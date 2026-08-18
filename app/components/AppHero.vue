@@ -1,5 +1,6 @@
 <template>
     <section
+        v-if="!loaded || slides.length"
         class="relative rounded-2xl bg-linear-to-br from-brand-cream to-brand-cream-dark overflow-hidden"
         :aria-busy="!loaded"
         aria-label="Bosh banner"
@@ -81,38 +82,35 @@
 
 <script setup lang="ts">
 // Ushbu bo'lim sahifa birinchi ochilganda skeleton (yuklanish)
-// holatida ko'rinadi. `loaded` true bo'lgach, haqiqiy slayder
-// kontenti (rasm, sarlavha, tugma) ko'rsatiladi. Hozircha fake
-// data: public/images ichidagi 2 ta rasm. Amalda backend/CMS'dan
-// (masalan useAsyncData bilan) olinadi.
+// holatida ko'rinadi. `loaded` true bo'lgach, backenddan kelgan
+// haqiqiy eventlar (banner/aksiya bloklari) ko'rsatiladi —
+// backendda `is_root DESC, created_at DESC` bo'yicha saralangan
+// holda keladi, shuning uchun qo'shimcha saralash shart emas.
+import { useEventsStore } from "~/stores/catalog/events";
+
+const store = useEventsStore();
+
 const loaded = ref(false);
 const activeIndex = ref(0);
-const slides = [
-    {
-        eyebrow: "Yangi kolleksiya",
-        title: "Qo'lda terilgan guldastalar",
-        subtitle: "Har bir maxsus lahza uchun",
-        cta: "Mahsulotlarni ko'rish",
-        image: "/images/gul1.webp",
-    },
-    {
-        eyebrow: "Bugungi taklif",
-        title: "Sevimlilar uchun gullar",
-        subtitle: "Bugun buyurtma bering, bugun yetkazamiz",
-        cta: "Mahsulotlarni ko'rish",
-        image: "/images/gul2.webp",
-    },
-];
-const slide = computed(() => slides[activeIndex.value] ?? slides[0]);
+const slides = computed(() => store.items);
+const slide = computed(() => slides.value[activeIndex.value] ?? slides.value[0]);
+
 let intervalId: ReturnType<typeof setInterval> | undefined;
-onMounted(() => {
-    window.setTimeout(() => {
+
+onMounted(async () => {
+    try {
+        await store.fetchAll();
+    } finally {
         loaded.value = true;
-    }, 1600);
-    intervalId = setInterval(() => {
-        activeIndex.value = (activeIndex.value + 1) % slides.length;
-    }, 5000);
+    }
+
+    if (slides.value.length > 1) {
+        intervalId = setInterval(() => {
+            activeIndex.value = (activeIndex.value + 1) % slides.value.length;
+        }, 5000);
+    }
 });
+
 onUnmounted(() => {
     clearInterval(intervalId);
 });

@@ -4,6 +4,7 @@ const isSidebarOpen = ref(false);
 const navItems = [
     { label: "Dashboard", to: "/admin" },
     { label: "Kategoriyalar", to: "/admin/categories" },
+    { label: "Eventlar", to: "/admin/events" },
     { label: "Mahsulotlar", to: "/admin/products" },
     { label: "Buyurtmalar", to: "/admin/orders" },
 ];
