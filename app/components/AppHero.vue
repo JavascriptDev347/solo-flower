@@ -35,6 +35,7 @@
                             trailing-icon="i-lucide-arrow-right"
                             size="lg"
                             class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-full mt-2"
+                            @click="goToCategory"
                         />
                     </div>
                 </Transition>
@@ -53,7 +54,8 @@
                         key="content-img"
                         :src="slide?.image"
                         :alt="slide?.eyebrow"
-                        class="w-full max-w-105 aspect-4/3 object-cover rounded-3xl shadow-lg"
+                        class="w-full max-w-105 aspect-4/3 object-cover rounded-3xl shadow-lg cursor-pointer"
+                        @click="goToCategory"
                     />
                 </Transition>
             </div>
@@ -87,19 +89,31 @@
 // backendda `is_root DESC, created_at DESC` bo'yicha saralangan
 // holda keladi, shuning uchun qo'shimcha saralash shart emas.
 import { useEventsStore } from "~/stores/catalog/events";
+import { useCategoriesStore } from "~/stores/catalog/categories";
 
 const store = useEventsStore();
+const categoriesStore = useCategoriesStore();
 
 const loaded = ref(false);
 const activeIndex = ref(0);
 const slides = computed(() => store.items);
 const slide = computed(() => slides.value[activeIndex.value] ?? slides.value[0]);
 
+const categoryName = computed(() => {
+    const categoryId = slide.value?.category_id;
+    return categoryId ? categoriesStore.byId(categoryId)?.name : undefined;
+});
+
+function goToCategory() {
+    if (!categoryName.value) return;
+    navigateTo({ path: "/catalog", query: { category: categoryName.value } });
+}
+
 let intervalId: ReturnType<typeof setInterval> | undefined;
 
 onMounted(async () => {
     try {
-        await store.fetchAll();
+        await Promise.all([store.fetchAll(), categoriesStore.fetchAll()]);
     } finally {
         loaded.value = true;
     }

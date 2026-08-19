@@ -149,65 +149,6 @@
                 @click="isMenuOpen = true"
             />
         </div>
-
-        <!-- Navigatsiya qatori: faqat desktop/tablet, mobilda menyu ichida -->
-        <nav
-            class="hidden md:block border-t border-stone-100"
-            aria-label="Asosiy navigatsiya"
-        >
-            <div
-                class="max-w-7xl mx-auto px-6 h-13 flex items-center gap-6 md:gap-8 overflow-x-auto"
-            >
-                <UButton
-                    icon="i-lucide-menu"
-                    label="Barcha kategoriyalar"
-                    class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-lg shrink-0"
-                />
-
-                <ul
-                    class="flex items-center gap-6 text-sm font-medium text-stone-700 whitespace-nowrap"
-                >
-                    <li>
-                        <NuxtLink
-                            to="#"
-                            class="px-3 py-1.5 rounded-full bg-brand-cream text-brand-accent-dark font-semibold"
-                        >
-                            Bugun yetkazib berish
-                        </NuxtLink>
-                    </li>
-                    <li>
-                        <NuxtLink
-                            to="#"
-                            class="px-3 py-1.5 rounded-full bg-rose-50 text-rose-600 font-semibold"
-                        >
-                            Sevgi kuni
-                        </NuxtLink>
-                    </li>
-                    <li>
-                        <NuxtLink
-                            to="#"
-                            class="hover:text-brand-accent transition-colors"
-                            >Ta'ziya guldastalari</NuxtLink
-                        >
-                    </li>
-                    <li>
-                        <NuxtLink
-                            to="#"
-                            class="hover:text-brand-accent transition-colors"
-                            >Tabrik guldastalari</NuxtLink
-                        >
-                    </li>
-                    <li>
-                        <NuxtLink
-                            to="#"
-                            class="hover:text-brand-accent transition-colors"
-                            >Oq gullar</NuxtLink
-                        >
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
         <!-- Mobil menyu: burger bosilganda ochiladigan slide-over -->
         <USlideover
             v-model:open="isMenuOpen"

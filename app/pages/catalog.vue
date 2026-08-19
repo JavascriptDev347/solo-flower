@@ -12,7 +12,17 @@
 
         <!-- Mahsulotlar qismi -->
         <main class="catalog-content">
-            <div class="empty-state">
+            <!-- Yuklanmoqda -->
+            <div v-if="isLoading" class="product-grid">
+                <div v-for="n in 8" :key="n" class="product-card skeleton">
+                    <div class="product-image skeleton-box" />
+                    <div class="skeleton-text" />
+                    <div class="skeleton-text skeleton-text-sm" />
+                </div>
+            </div>
+
+            <!-- Bo'sh holat -->
+            <div v-else-if="!products.length" class="empty-state">
                 <div class="empty-icon">
                     <svg
                         width="64"
@@ -32,18 +42,106 @@
                 </div>
                 <p class="empty-title">Mahsulotlar hozircha yo'q</p>
                 <p class="empty-subtitle">
-                    "{{ categoryName }}" bo'yicha mahsulotlar tez orada
-                    qo'shiladi
+                    <template v-if="categoryName">
+                        "{{ categoryName }}" bo'yicha mahsulotlar tez orada
+                        qo'shiladi
+                    </template>
+                    <template v-else>
+                        Mahsulotlar tez orada qo'shiladi
+                    </template>
                 </p>
+            </div>
+
+            <!-- Mahsulotlar ro'yxati -->
+            <div v-else class="product-grid">
+                <div
+                    v-for="product in products"
+                    :key="product.id"
+                    class="product-card"
+                >
+                    <div class="product-image">
+                        <img
+                            v-if="product.images[0]"
+                            :src="product.images[0]"
+                            :alt="product.name"
+                            loading="lazy"
+                        />
+                        <span
+                            v-if="!product.is_available"
+                            class="unavailable-badge"
+                        >
+                            Tugagan
+                        </span>
+                        <span
+                            v-else-if="product.discount_amount"
+                            class="discount-badge"
+                        >
+                            Chegirma
+                        </span>
+                    </div>
+                    <p class="product-name">{{ product.name }}</p>
+                    <div class="product-price">
+                        <span class="price-final">
+                            {{
+                                formatPrice(
+                                    product.final_price_amount,
+                                    product.price_currency,
+                                )
+                            }}
+                        </span>
+                        <span
+                            v-if="product.discount_amount"
+                            class="price-original"
+                        >
+                            {{
+                                formatPrice(
+                                    product.price_amount,
+                                    product.price_currency,
+                                )
+                            }}
+                        </span>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useProductsStore } from "~/stores/catalog/products";
+import { useCategoriesStore } from "~/stores/catalog/categories";
+
 const route = useRoute();
+const productsStore = useProductsStore();
+const categoriesStore = useCategoriesStore();
 
 const categoryName = computed(() => (route.query.category as string) || "");
+const isLoading = ref(true);
+const products = computed(() => productsStore.items);
+
+function formatPrice(amount: number, currency: string) {
+    return `${amount.toLocaleString("uz-UZ")} ${currency}`;
+}
+
+async function loadProducts() {
+    isLoading.value = true;
+    try {
+        await categoriesStore.fetchAll();
+        const category = categoryName.value
+            ? categoriesStore.byName(categoryName.value)
+            : undefined;
+        // har doim force: true — aks holda boshqa kategoriyaga o'tib qaytganda
+        // eski (boshqa kategoriyaning) keshlangan ro'yxati ko'rsatilib qolishi mumkin
+        await productsStore.fetchAll({ category_id: category?.id }, true);
+    } catch {
+        // xato allaqachon useApi ichida notify qilingan
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+watch(categoryName, loadProducts);
+onMounted(loadProducts);
 
 useHead(() => ({
     title: categoryName.value ? `${categoryName.value} — Katalog` : "Katalog",
@@ -87,14 +185,17 @@ useHead(() => ({
 
 /* O'ng qism */
 .catalog-content {
-    flex: 1;
+    margin-top: 25px;
+    min-width: 0;
     min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
     text-align: center;
     padding: 60px 20px;
 }
@@ -119,7 +220,120 @@ useHead(() => ({
     margin: 0;
 }
 
+/* Mahsulotlar to'ri */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f4f4f5;
+}
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.15s ease;
+}
+.product-card:hover .product-image img {
+    transform: scale(1.03);
+}
+
+.unavailable-badge,
+.discount-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    color: #fff;
+}
+.unavailable-badge {
+    background: #9a9aa2;
+}
+.discount-badge {
+    background: var(--color-primary, #e0568c);
+}
+
+.product-name {
+    margin: 10px 0 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.price-final {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-primary, #e0568c);
+}
+.price-original {
+    font-size: 12px;
+    color: #9a9aa2;
+    text-decoration: line-through;
+}
+
+/* Skeleton */
+.skeleton-box {
+    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+.skeleton-text {
+    margin-top: 10px;
+    width: 80%;
+    height: 12px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+.skeleton-text-sm {
+    margin-top: 6px;
+    width: 40%;
+}
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
 /* Mobil */
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+}
+
 @media (max-width: 640px) {
     .catalog-page {
         flex-direction: column;

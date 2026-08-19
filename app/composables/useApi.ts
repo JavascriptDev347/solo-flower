@@ -1,3 +1,4 @@
+import { callWithNuxt } from "#app";
 import type { ApiEnvelope } from "~/types/api";
 import { ApiError } from "~/types/api";
 
@@ -27,6 +28,9 @@ export function useApi() {
   const config = useRuntimeConfig();
   const { accessToken, refreshToken, setTokens, clearTokens } = useAuthToken();
   const notify = useNotify();
+  // await'lardan keyin ham to'g'ri ishlashi uchun (SSR paytida navigateTo
+  // Nuxt kontekstini yo'qotib qo'ymasligi kerak — callWithNuxt shu uchun)
+  const nuxtApp = useNuxtApp();
 
   async function tryRefreshToken(): Promise<boolean> {
     if (!refreshToken.value) return false;
@@ -79,7 +83,14 @@ export function useApi() {
       });
       return res.data as T;
     } catch (err: any) {
-      const status: number = err?.response?.status || err?.statusCode || 500;
+      if (!err?.response) {
+        console.error("Network/CORS xatosi:", err);
+
+
+      }
+
+      const status: number = err.response.status;
+
       const serverError: string | undefined =
         err?.response?._data?.error || err?.data?.error;
 
@@ -96,8 +107,20 @@ export function useApi() {
         }
         clearTokens();
         if (!opts.silent) notify.error("Sessiya tugadi, qaytadan kiring");
-        await navigateTo("/auth/login");
+        await callWithNuxt(nuxtApp, () => navigateTo("/auth/login"));
         throw new ApiError(401, "Sessiya tugadi");
+      }
+
+      // 500 kelsa — saqlangan tokenlarni tozalab, foydalanuvchini bosh sahifaga chiqaramiz
+      if (status === 500) {
+        clearTokens();
+        if (!opts.silent) {
+          notify.error(
+            "Server bilan muammo bo'lmoqda, keyinroq urinib ko'ring",
+          );
+        }
+        await callWithNuxt(nuxtApp, () => navigateTo("/"));
+        throw new ApiError(500, "Server bilan muammo bo'lmoqda");
       }
 
       const friendly =

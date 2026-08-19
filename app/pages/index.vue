@@ -12,6 +12,7 @@
         </div>
     </section>
     <CategoryGrid />
+    <ProductGrid />
 </template>
 
 <script setup lang="ts"></script>
