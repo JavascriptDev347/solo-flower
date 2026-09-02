@@ -36,8 +36,8 @@ export const useProductsStore = defineStore("products", {
       this.loading = true;
       try {
         const result = await list(params);
-        this.items = result.items;
-        this.pagination = result.pagination;
+        this.items = result?.items ?? [];
+        this.pagination = result?.pagination ?? null;
         if (!hasFilter) this.loaded = true;
         return this.items;
       } finally {
@@ -50,8 +50,8 @@ export const useProductsStore = defineStore("products", {
       this.catalogLoading = true;
       try {
         const result = await list(params);
-        this.catalogItems = result.items;
-        this.catalogPagination = result.pagination;
+        this.catalogItems = result?.items ?? [];
+        this.catalogPagination = result?.pagination ?? null;
         return this.catalogItems;
       } finally {
         this.catalogLoading = false;
@@ -63,8 +63,8 @@ export const useProductsStore = defineStore("products", {
       this.adminLoading = true;
       try {
         const result = await fetchAllAdmin(params);
-        this.adminItems = result.items;
-        this.adminPagination = result.pagination;
+        this.adminItems = result?.items ?? [];
+        this.adminPagination = result?.pagination ?? null;
         return result;
       } finally {
         this.adminLoading = false;

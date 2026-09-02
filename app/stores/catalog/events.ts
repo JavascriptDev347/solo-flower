@@ -25,7 +25,7 @@ export const useEventsStore = defineStore("events", {
       const { list } = useEvents();
       this.loading = true;
       try {
-        this.items = await list();
+        this.items = (await list()) ?? [];
         this.loaded = true;
         return this.items;
       } finally {
@@ -37,7 +37,7 @@ export const useEventsStore = defineStore("events", {
       const { fetchAllAdmin } = useEvents();
       this.adminLoading = true;
       try {
-        this.adminItems = await fetchAllAdmin();
+        this.adminItems = (await fetchAllAdmin()) ?? [];
         return this.adminItems;
       } finally {
         this.adminLoading = false;

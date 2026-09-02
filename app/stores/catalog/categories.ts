@@ -28,7 +28,7 @@ export const useCategoriesStore = defineStore("categories", {
       const { list } = useCategories();
       this.loading = true;
       try {
-        this.items = await list();
+        this.items = (await list()) ?? [];
         this.loaded = true;
         return this.items;
       } finally {
@@ -40,7 +40,7 @@ export const useCategoriesStore = defineStore("categories", {
       const { fetchAll: fetchAllAdminApi } = useCategories();
       this.adminLoading = true;
       try {
-        this.adminItems = await fetchAllAdminApi(search);
+        this.adminItems = (await fetchAllAdminApi(search)) ?? [];
         return this.adminItems;
       } finally {
         this.adminLoading = false;
