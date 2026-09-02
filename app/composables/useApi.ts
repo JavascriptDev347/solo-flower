@@ -26,6 +26,9 @@ let refreshPromise: Promise<boolean> | null = null;
 
 export function useApi() {
   const config = useRuntimeConfig();
+  const baseURL = import.meta.server
+    ? config.apiBaseServer
+    : config.public.apiBase;
   const { accessToken, refreshToken, setTokens, clearTokens } = useAuthToken();
   const notify = useNotify();
   // await'lardan keyin ham to'g'ri ishlashi uchun (SSR paytida navigateTo
@@ -85,8 +88,11 @@ export function useApi() {
     } catch (err: any) {
       if (!err?.response) {
         console.error("Network/CORS xatosi:", err);
-
-
+        clearTokens();
+        if (!opts.silent) {
+          notify.error("Server bilan bog'lanib bo'lmadi");
+        }
+        throw new ApiError(0, "Server bilan bog'lanib bo'lmadi");
       }
 
       const status: number = err.response.status;

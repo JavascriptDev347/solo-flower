@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   runtimeConfig: {
+    apiBaseServer:
+      process.env.NUXT_API_BASE_SERVER || "http://host.docker.internal:8080",
     public: {
       apiBase:
         process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8080/api/v1",
