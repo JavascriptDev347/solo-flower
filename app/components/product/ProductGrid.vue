@@ -15,18 +15,13 @@
         </div>
 
         <div v-else class="product-grid">
-            <NuxtLink
+            <ProductCard
                 v-for="p in products"
                 :key="p.id"
-                :to="`/product/${p.slug}`"
-                class="product-grid-link"
-            >
-                <ProductCard
-                    :product="p"
-                    @add-to-cart="onAddToCart"
-                    @toggle-wishlist="onToggleWishlist"
-                />
-            </NuxtLink>
+                :product="p"
+                @add-to-cart="onAddToCart"
+                @toggle-wishlist="onToggleWishlist"
+            />
         </div>
     </section>
 </template>
@@ -95,12 +90,6 @@ function onToggleWishlist(product: Product) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-}
-
-.product-grid-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
 }
 
 @media (max-width: 900px) {

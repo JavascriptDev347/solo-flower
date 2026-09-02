@@ -1,10 +1,16 @@
 import type { Product, PackagingType } from "~/types/product";
+import type { PaginatedList } from "~/types/api";
 
 export type { Product };
 
 export interface ProductListParams {
   search?: string;
   category_id?: string;
+}
+
+export interface AdminProductListParams extends ProductListParams {
+  page?: number;
+  page_size?: number;
 }
 
 export interface CreateProductPayload {
@@ -61,10 +67,10 @@ export function useProducts() {
   const { get, put, delete: del, upload } = useApi();
 
   const list = (params?: ProductListParams) =>
-    get<Product[]>("/products", params as Record<string, any>);
+    get<PaginatedList<Product>>("/products", params as Record<string, any>);
 
   const listByCategory = (categoryId: string, search = "") =>
-    get<Product[]>(
+    get<PaginatedList<Product>>(
       `/categories/${categoryId}/products`,
       search ? { search } : undefined,
     );
@@ -73,8 +79,11 @@ export function useProducts() {
 
   const getBySlug = (slug: string) => get<Product>(`/products/slug/${slug}`);
 
-  const fetchAllAdmin = (params?: ProductListParams) =>
-    get<Product[]>("/products/admin", params as Record<string, any>);
+  const fetchAllAdmin = (params?: AdminProductListParams) =>
+    get<PaginatedList<Product>>(
+      "/products/admin",
+      params as Record<string, any>,
+    );
 
   const create = (payload: CreateProductPayload) => {
     const formData = new FormData();

@@ -17,7 +17,7 @@ export interface Product {
   price_amount: number;
   price_currency: string;
   discount_amount?: number;
-  final_price_amount: number;
+  final_price_amount?: number | null;
   slug: string;
   is_available: boolean;
   rating: number;

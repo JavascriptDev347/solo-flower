@@ -17,6 +17,10 @@ const search = ref("");
 const categoryFilter = ref("");
 const showDeleted = ref(false);
 
+const page = ref(1);
+const pageSize = ref(20);
+const pagination = computed(() => store.adminPagination);
+
 const isModalOpen = ref(false);
 const selectedProduct = ref<Product | null>(null);
 
@@ -30,18 +34,33 @@ async function loadProducts() {
         await store.fetchAllAdmin({
             search: search.value || undefined,
             category_id: categoryFilter.value || undefined,
+            page: page.value,
+            page_size: pageSize.value,
         });
     } catch {
         // xato allaqachon useApi ichida notify qilingan
     }
 }
 
+function goToPage(target: number) {
+    const totalPages = pagination.value?.total_pages ?? 1;
+    if (target < 1 || target > totalPages) return;
+    page.value = target;
+    loadProducts();
+}
+
 watch(search, () => {
     clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(loadProducts, 400);
+    searchTimeout = setTimeout(() => {
+        page.value = 1;
+        loadProducts();
+    }, 400);
 });
 
-watch(categoryFilter, loadProducts);
+watch(categoryFilter, () => {
+    page.value = 1;
+    loadProducts();
+});
 
 const filteredProducts = computed(() =>
     showDeleted.value
@@ -53,8 +72,8 @@ function categoryName(categoryId: string) {
     return categoriesStore.byId(categoryId)?.name ?? "—";
 }
 
-function formatPrice(amount: number, currency: string) {
-    return `${amount.toLocaleString("uz-UZ")} ${currency}`;
+function formatPrice(amount: number | null | undefined, currency: string) {
+    return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
 }
 
 function openCreate() {
@@ -93,7 +112,7 @@ onMounted(() => {
             <div>
                 <h1 class="page-title">Mahsulotlar</h1>
                 <p class="page-subtitle">
-                    Jami: {{ filteredProducts.length }} ta
+                    Jami: {{ pagination?.total ?? filteredProducts.length }} ta
                 </p>
             </div>
             <button class="btn-primary" @click="openCreate">
@@ -166,7 +185,8 @@ onMounted(() => {
                             <div class="price-final">
                                 {{
                                     formatPrice(
-                                        row.final_price_amount,
+                                        row.final_price_amount ??
+                                            row.price_amount,
                                         row.price_currency,
                                     )
                                 }}
@@ -259,7 +279,7 @@ onMounted(() => {
                     <div class="price-final">
                         {{
                             formatPrice(
-                                row.final_price_amount,
+                                row.final_price_amount ?? row.price_amount,
                                 row.price_currency,
                             )
                         }}
@@ -301,6 +321,27 @@ onMounted(() => {
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Sahifalash -->
+        <div v-if="pagination && pagination.total_pages > 1" class="pagination">
+            <button
+                class="btn-ghost"
+                :disabled="page <= 1"
+                @click="goToPage(page - 1)"
+            >
+                Oldingi
+            </button>
+            <span class="pagination-info">
+                {{ page }} / {{ pagination.total_pages }}
+            </span>
+            <button
+                class="btn-ghost"
+                :disabled="page >= pagination.total_pages"
+                @click="goToPage(page + 1)"
+            >
+                Keyingi
+            </button>
         </div>
 
         <ProductFormModal
@@ -586,6 +627,19 @@ onMounted(() => {
     padding: 40px 16px;
     color: var(--color-text-muted);
     font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+.pagination-info {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
 }
 
 /* Mobil kartalar */

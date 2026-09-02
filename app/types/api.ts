@@ -4,6 +4,18 @@ export interface ApiEnvelope<T> {
   message?: string
 }
 
+export interface Pagination {
+  page: number
+  page_size: number
+  total: number
+  total_pages: number
+}
+
+export interface PaginatedList<T> {
+  items: T[]
+  pagination: Pagination
+}
+
 // Backend status kodlariga mos xatolik turlari
 export type ApiErrorStatus = 400 | 401 | 403 | 404 | 409 | 500
 

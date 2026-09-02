@@ -1,6 +1,6 @@
 <template>
     <div class="product-page">
-        <NuxtLink to="/catalog" class="back-link">
+        <NuxtLink :to="backLink" class="back-link">
             <UIcon name="i-lucide-arrow-left" class="size-4" />
             Katalogga qaytish
         </NuxtLink>
@@ -24,11 +24,10 @@
             <p class="not-found-subtitle">
                 Havola noto'g'ri yoki mahsulot o'chirilgan bo'lishi mumkin
             </p>
-            <NuxtLink to="/catalog" class="back-link">
+            <NuxtLink :to="backLink" class="back-link">
                 Katalogga qaytish
             </NuxtLink>
         </div>
-
         <!-- Mahsulot -->
         <template v-else-if="product">
             <div class="product-layout">
@@ -110,7 +109,8 @@
                         <span class="price-final">
                             {{
                                 formatPrice(
-                                    product.final_price_amount,
+                                    product.final_price_amount ??
+                                        product.price_amount,
                                     product.price_currency,
                                 )
                             }}
@@ -329,6 +329,8 @@
                 </p>
             </div>
         </template>
+
+
     </div>
 </template>
 
@@ -375,12 +377,20 @@ const categoryName = computed(() =>
         : undefined,
 );
 
+// /catalog endi faqat ?category=nomi bilan ochiladi, shuning uchun
+// kategoriya noma'lum bo'lsa (masalan hali yuklanmagan yoki mahsulot
+// topilmagan) bosh sahifaga qaytaramiz
+const backLink = computed(() =>
+    categoryName.value
+        ? { path: "/catalog", query: { category: categoryName.value } }
+        : "/",
+);
+
 const discountPercent = computed(() => {
     if (!product.value?.discount_amount) return 0;
-    return Math.round(
-        (1 - product.value.final_price_amount / product.value.price_amount) *
-            100,
-    );
+    const finalAmount =
+        product.value.final_price_amount ?? product.value.price_amount;
+    return Math.round((1 - finalAmount / product.value.price_amount) * 100);
 });
 
 const packagingLabel = computed(
@@ -518,8 +528,8 @@ function requestYoutubeFullscreen() {
 watch(youtubeVideoId, initYoutubePlayer);
 onUnmounted(destroyYoutubePlayer);
 
-function formatPrice(amount: number, currency: string) {
-    return `${amount.toLocaleString("uz-UZ")} ${currency}`;
+function formatPrice(amount: number | null | undefined, currency: string) {
+    return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
 }
 
 // Backendda sharhlar tizimi hali yo'q — hozircha namunaviy fake ma'lumot

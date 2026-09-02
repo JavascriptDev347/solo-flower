@@ -4,18 +4,26 @@ import {
   type CreateProductPayload,
   type UpdateProductPayload,
   type ProductListParams,
+  type AdminProductListParams,
 } from "~/composables/catalog/useProducts";
 import type { Product } from "~/types/product";
+import type { Pagination } from "~/types/api";
 
 export const useProductsStore = defineStore("products", {
   state: () => ({
     // Public katalog uchun (faqat faol mahsulotlar, filtrsiz so'rov keshlanadi)
     items: [] as Product[],
+    pagination: null as Pagination | null,
     loaded: false,
     loading: false,
     // Admin ro'yxati uchun (o'chirilganlar bilan, har doim yangilanadi)
     adminItems: [] as Product[],
+    adminPagination: null as Pagination | null,
     adminLoading: false,
+    // Katalog sahifasi uchun (filtrlangan, homepage keshiga tegmaydi)
+    catalogItems: [] as Product[],
+    catalogPagination: null as Pagination | null,
+    catalogLoading: false,
   }),
 
   actions: {
@@ -27,7 +35,9 @@ export const useProductsStore = defineStore("products", {
       const { list } = useProducts();
       this.loading = true;
       try {
-        this.items = await list(params);
+        const result = await list(params);
+        this.items = result.items;
+        this.pagination = result.pagination;
         if (!hasFilter) this.loaded = true;
         return this.items;
       } finally {
@@ -35,12 +45,27 @@ export const useProductsStore = defineStore("products", {
       }
     },
 
-    async fetchAllAdmin(params?: ProductListParams) {
+    async fetchCatalog(params?: ProductListParams) {
+      const { list } = useProducts();
+      this.catalogLoading = true;
+      try {
+        const result = await list(params);
+        this.catalogItems = result.items;
+        this.catalogPagination = result.pagination;
+        return this.catalogItems;
+      } finally {
+        this.catalogLoading = false;
+      }
+    },
+
+    async fetchAllAdmin(params?: AdminProductListParams) {
       const { fetchAllAdmin } = useProducts();
       this.adminLoading = true;
       try {
-        this.adminItems = await fetchAllAdmin(params);
-        return this.adminItems;
+        const result = await fetchAllAdmin(params);
+        this.adminItems = result.items;
+        this.adminPagination = result.pagination;
+        return result;
       } finally {
         this.adminLoading = false;
       }

@@ -1,5 +1,6 @@
 <template>
     <div class="product-card">
+        <!-- Rasm qismi -->
         <div class="card-media">
             <img
                 v-if="coverImage"
@@ -11,61 +12,80 @@
                 <UIcon name="i-lucide-image-off" class="size-8" />
             </div>
 
-            <!-- Chapda: mavjudlik / chegirma belgisi -->
+            <!-- Holat belgisi (mavjud emas) -->
             <span
                 v-if="!product.is_available"
                 class="status-badge status-unavailable"
             >
                 Tugagan
             </span>
-            <span
-                v-else-if="discountPercent"
-                class="status-badge status-discount"
-            >
-                -{{ discountPercent }}%
-            </span>
-
-            <!-- O'ngda: sevimlilar tugmasi -->
-            <button
-                type="button"
-                class="wishlist-btn"
-                :class="{ active: isWishlisted }"
-                :aria-pressed="isWishlisted"
-                @click.stop="$emit('toggle-wishlist', product)"
-            >
-                <UIcon name="i-lucide-heart" class="size-4" />
-            </button>
         </div>
 
+        <!-- Kontent qismi -->
         <div class="card-body">
-            <h3 class="card-title">{{ product.name }}</h3>
+            <!-- Mahsulot nomi -->
+            <h3 class="card-title">
+                <NuxtLink
+                    :to="`/product/${product.slug}`"
+                    class="card-title-link"
+                >
+                    {{ product.name }}
+                </NuxtLink>
+            </h3>
 
-            <div v-show="product.rating" class="card-rating">
-                <UIcon name="i-lucide-star" class="size-3.5 star-filled" />
-                <span>{{ product.rating.toFixed(1) }}</span>
+            <!-- Reyting va Sevimlilar (bitta qatorda) -->
+            <div class="rating-wishlist-row">
+                <div v-if="product.rating" class="card-rating">
+                    <UIcon name="i-lucide-star" class="size-4 star-filled" />
+                    <span>{{ Number(product.rating).toFixed(1) }}</span>
+                </div>
+                <div v-else></div>
+
+                <button
+                    type="button"
+                    class="wishlist-btn"
+                    :class="{ active: isWishlisted }"
+                    :aria-pressed="isWishlisted"
+                    @click.stop="$emit('toggle-wishlist', product)"
+                >
+                    <UIcon name="i-lucide-heart" class="size-5" />
+                </button>
             </div>
 
-            <div class="card-price-row">
-                <span class="price-final">
-                    {{
-                        formatPrice(
-                            product.final_price_amount,
-                            product.price_currency,
-                        )
-                    }}
-                </span>
-                <span v-if="product.discount_amount" class="price-original">
-                    {{
-                        formatPrice(
-                            product.price_amount,
-                            product.price_currency,
-                        )
-                    }}
+            <div class="divider"></div>
+
+            <!-- Narxlar va Chegirma foizi -->
+            <div class="price-discount-row">
+                <div class="price-stack">
+                    <span class="price-final">
+                        {{
+                            formatPrice(
+                                product.final_price_amount ??
+                                    product.price_amount,
+                                product.price_currency,
+                            )
+                        }}
+                    </span>
+                    <span v-if="product.discount_amount" class="price-original">
+                        {{
+                            formatPrice(
+                                product.price_amount,
+                                product.price_currency,
+                            )
+                        }}
+                    </span>
+                </div>
+
+                <span
+                    v-if="discountPercent"
+                    class="status-badge status-discount"
+                >
+                    -{{ discountPercent }}%
                 </span>
             </div>
 
-            <!-- Savatga qo'shish (rasm ustiga chiqmaydi) -->
-            <div class="hover-actions">
+            <!-- Pastki Savatga tugmasi -->
+            <div class="cart-action">
                 <UButton
                     label="Savatga"
                     trailing-icon="i-lucide-shopping-cart"
@@ -97,14 +117,13 @@ const coverImage = computed(() => props.product.images?.[0]);
 
 const discountPercent = computed(() => {
     if (!props.product.discount_amount) return 0;
-    return Math.round(
-        (1 - props.product.final_price_amount / props.product.price_amount) *
-            100,
-    );
+    const finalAmount =
+        props.product.final_price_amount ?? props.product.price_amount;
+    return Math.round((1 - finalAmount / props.product.price_amount) * 100);
 });
 
-function formatPrice(amount: number, currency: string) {
-    return `${amount.toLocaleString("uz-UZ")} ${currency}`;
+function formatPrice(amount: number | null | undefined, currency: string) {
+    return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
 }
 </script>
 
@@ -112,175 +131,165 @@ function formatPrice(amount: number, currency: string) {
 .product-card {
     display: flex;
     flex-direction: column;
-    height: 530px;
-    width: 370px;
-    background: #fff;
-    border: 1px solid #e4e4e7;
-    border-radius: 24px;
+    width: 320px;
+    background: #ffffff;
+    border: 1px solid #fecdd3;
+    border-radius: 28px;
     padding: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     transition:
-        border-color 0.2s,
-        box-shadow 0.2s,
-        transform 0.2s;
-}
-.product-card:hover {
-    border-color: transparent;
-    box-shadow: 0 12px 28px -12px rgba(26, 26, 26, 0.18);
-    transform: translateY(-2px);
-}
-@media (max-width: 640px) {
-    .product-card {
-        width: 330px;
-        height: 430px;
-    }
+        transform 0.2s,
+        box-shadow 0.2s;
 }
 
-/* Media: qolgan bo'sh joyni egallaydi, karta balandligi doim bir xil bo'lishi
-   uchun aspect-ratio o'rniga flex bilan hisoblanadi */
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
 .card-media {
     position: relative;
     width: 100%;
-    flex: 1 1 auto;
-    min-height: 0;
+    aspect-ratio: 1 / 1;
     border-radius: 20px;
     overflow: hidden;
-    background: #f4f4f5;
+    background: #fdf2f4;
 }
+
 .card-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* scale-down o'rniga */
-    object-position: center;
+    object-fit: cover;
     display: block;
-    transition: transform 0.35s ease;
 }
-.product-card:hover .card-image {
-    transform: scale(1.04);
-}
+
 .card-image-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #b0b0b8;
+    color: #fda4af;
 }
 
-/* LTR uchun: status belgisi chap tomonda, sevimlilar tugmasi o'ng tomonda */
 .status-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 4px 12px;
+    padding: 4px 10px;
     border-radius: 999px;
-    z-index: 1;
-}
-.status-unavailable {
-    background: #9a9aa2;
-    color: #fff;
-}
-.status-discount {
-    color: #fff;
-    background: var(--color-error, #e5484d);
 }
 
-.wishlist-btn {
+.status-unavailable {
     position: absolute;
     top: 10px;
-    right: 10px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #6b6b73;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1;
-    transition:
-        color 0.15s,
-        transform 0.15s;
-}
-.wishlist-btn:hover {
-    transform: scale(1.08);
-}
-.wishlist-btn.active {
-    color: var(--color-primary, #e0568c);
-}
-.wishlist-btn.active :deep(svg) {
-    fill: currentColor;
+    left: 10px;
+    background: #71717a;
+    color: #fff;
 }
 
-/* Savatga tugmasi doim ko'rinadi va karta oxirida pastga yopishib turadi */
-.hover-actions {
-    margin-top: auto;
-    padding-top: 10px;
-}
-.add-to-cart-btn {
-    width: 100%;
-    justify-content: center;
+.status-discount {
+    background: #ffe4e6;
+    color: #e11d48;
 }
 
-/* Body: media qolgan joyni egallagani uchun body o'ziga kerakli joyni
-   oladi, savatga tugmasi esa har doim uning tagida (karta oxirida) qoladi */
 .card-body {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    padding: 14px 4px 4px;
+    padding: 12px 6px 4px;
 }
+
 .card-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1a1a1a;
-    line-height: 1.35;
-    margin: 0 0 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.4;
+    margin: 0 0 10px;
+    text-align: left;
+}
+
+.card-title-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.rating-wishlist-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .card-rating {
     display: flex;
     align-items: center;
     gap: 4px;
-    min-height: 18px;
-    font-size: 13px;
-    color: #1a1a1a;
-    margin-bottom: 10px;
-}
-.star-filled {
-    color: #f5a623;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
 }
 
-.card-price-row {
+.star-filled {
+    color: #e11d48;
+}
+
+.wishlist-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    transition:
+        color 0.15s,
+        transform 0.15s;
 }
+
+.wishlist-btn:hover {
+    transform: scale(1.1);
+    color: #e11d48;
+}
+
+.wishlist-btn.active {
+    color: #e11d48;
+}
+
+.wishlist-btn.active :deep(svg) {
+    fill: currentColor;
+}
+
+.divider {
+    height: 1px;
+    background-color: #f3f4f6;
+    margin: 10px 0;
+}
+
+.price-discount-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.price-stack {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
 .price-final {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--color-primary, #e0568c);
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
 }
+
 .price-original {
     font-size: 13px;
-    color: #9a9aa2;
+    color: #9ca3af;
     text-decoration: line-through;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .product-card,
-    .card-image,
-    .hover-actions,
-    .wishlist-btn {
-        transition: none;
-    }
+.cart-action {
+    margin-top: 4px;
 }
 </style>

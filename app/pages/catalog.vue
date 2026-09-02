@@ -5,7 +5,7 @@
             <div class="category-badge">
                 <span class="category-label">Kategoriya</span>
                 <h1 class="category-title">
-                    {{ categoryName || "Barcha mahsulotlar" }}
+                    {{ categoryName }}
                 </h1>
             </div>
         </aside>
@@ -42,13 +42,8 @@
                 </div>
                 <p class="empty-title">Mahsulotlar hozircha yo'q</p>
                 <p class="empty-subtitle">
-                    <template v-if="categoryName">
-                        "{{ categoryName }}" bo'yicha mahsulotlar tez orada
-                        qo'shiladi
-                    </template>
-                    <template v-else>
-                        Mahsulotlar tez orada qo'shiladi
-                    </template>
+                    "{{ categoryName }}" bo'yicha mahsulotlar tez orada
+                    qo'shiladi
                 </p>
             </div>
 
@@ -84,7 +79,8 @@
                         <span class="price-final">
                             {{
                                 formatPrice(
-                                    product.final_price_amount,
+                                    product.final_price_amount ??
+                                        product.price_amount,
                                     product.price_currency,
                                 )
                             }}
@@ -111,16 +107,26 @@
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
 
+// /catalog faqat ?category=nomi bilan ochiladi — kategoriyasiz "barcha
+// mahsulotlar" ko'rinishi yo'q, shuning uchun bosh sahifaga qaytaramiz
+definePageMeta({
+    middleware: [
+        (to) => {
+            if (!to.query.category) return navigateTo("/");
+        },
+    ],
+});
+
 const route = useRoute();
 const productsStore = useProductsStore();
 const categoriesStore = useCategoriesStore();
 
 const categoryName = computed(() => (route.query.category as string) || "");
 const isLoading = ref(true);
-const products = computed(() => productsStore.items);
+const products = computed(() => productsStore.catalogItems);
 
-function formatPrice(amount: number, currency: string) {
-    return `${amount.toLocaleString("uz-UZ")} ${currency}`;
+function formatPrice(amount: number | null | undefined, currency: string) {
+    return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
 }
 
 async function loadProducts() {
@@ -130,9 +136,7 @@ async function loadProducts() {
         const category = categoryName.value
             ? categoriesStore.byName(categoryName.value)
             : undefined;
-        // har doim force: true — aks holda boshqa kategoriyaga o'tib qaytganda
-        // eski (boshqa kategoriyaning) keshlangan ro'yxati ko'rsatilib qolishi mumkin
-        await productsStore.fetchAll({ category_id: category?.id }, true);
+        await productsStore.fetchCatalog({ category_id: category?.id });
     } catch {
         // xato allaqachon useApi ichida notify qilingan
     } finally {
