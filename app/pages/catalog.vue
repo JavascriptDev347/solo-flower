@@ -3,7 +3,7 @@
         <!-- Chap tomonda kategoriya nomi -->
         <aside class="catalog-sidebar">
             <div class="category-badge">
-                <span class="category-label">Kategoriya</span>
+                <span class="category-label">{{ t("catalog.categoryLabel") }}</span>
                 <h1 class="category-title">
                     {{ categoryName }}
                 </h1>
@@ -40,10 +40,9 @@
                         />
                     </svg>
                 </div>
-                <p class="empty-title">Mahsulotlar hozircha yo'q</p>
+                <p class="empty-title">{{ t("catalog.empty") }}</p>
                 <p class="empty-subtitle">
-                    "{{ categoryName }}" bo'yicha mahsulotlar tez orada
-                    qo'shiladi
+                    {{ t("catalog.emptySubtitle", { category: categoryName }) }}
                 </p>
             </div>
 
@@ -65,13 +64,13 @@
                             v-if="!product.is_available"
                             class="unavailable-badge"
                         >
-                            Tugagan
+                            {{ t("product.unavailable") }}
                         </span>
                         <span
                             v-else-if="product.discount_amount"
                             class="discount-badge"
                         >
-                            Chegirma
+                            {{ t("product.discount") }}
                         </span>
                     </div>
                     <p class="product-name">{{ product.name }}</p>
@@ -106,6 +105,7 @@
 <script setup lang="ts">
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
+import type { Lang } from "~/composables/catalog/useProducts";
 
 // /catalog faqat ?category=nomi bilan ochiladi — kategoriyasiz "barcha
 // mahsulotlar" ko'rinishi yo'q, shuning uchun bosh sahifaga qaytaramiz
@@ -117,6 +117,7 @@ definePageMeta({
     ],
 });
 
+const { t, locale } = useI18n();
 const route = useRoute();
 const productsStore = useProductsStore();
 const categoriesStore = useCategoriesStore();
@@ -132,11 +133,14 @@ function formatPrice(amount: number | null | undefined, currency: string) {
 async function loadProducts() {
     isLoading.value = true;
     try {
-        await categoriesStore.fetchAll();
+        await categoriesStore.fetchAll(false, locale.value as Lang);
         const category = categoryName.value
             ? categoriesStore.byName(categoryName.value)
             : undefined;
-        await productsStore.fetchCatalog({ category_id: category?.id });
+        await productsStore.fetchCatalog({
+            category_id: category?.id,
+            lang: locale.value as Lang,
+        });
     } catch {
         // xato allaqachon useApi ichida notify qilingan
     } finally {
@@ -144,11 +148,13 @@ async function loadProducts() {
     }
 }
 
-watch(categoryName, loadProducts);
+watch([categoryName, locale], loadProducts);
 onMounted(loadProducts);
 
 useHead(() => ({
-    title: categoryName.value ? `${categoryName.value} — Katalog` : "Katalog",
+    title: categoryName.value
+        ? `${categoryName.value} — ${t("catalog.pageTitleFallback")}`
+        : t("catalog.pageTitleFallback"),
 }));
 </script>
 

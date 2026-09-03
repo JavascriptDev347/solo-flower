@@ -1,52 +1,88 @@
 <template>
-    <section class="category-grid-wrapper">
-        <h2 v-if="title" class="category-grid-title">{{ title }}</h2>
+    <section class="category-slider-wrapper">
+        <h2 v-if="title" class="category-title">{{ title }}</h2>
 
-        <div v-if="pending" class="category-grid">
-            <div v-for="n in 10" :key="n" class="category-item skeleton">
-                <div class="category-image skeleton-box" />
+        <!-- Skeleton Yuklanish Holati -->
+        <div v-if="pending" class="skeleton-track">
+            <div v-for="n in 5" :key="n" class="category-card skeleton-card">
                 <div class="skeleton-text" />
+                <div class="skeleton-circle" />
             </div>
         </div>
 
+        <!-- Bo'sh Holat -->
         <div v-else-if="categories.length === 0" class="category-empty">
-            Kategoriyalar topilmadi
+            {{ t("category.empty") }}
         </div>
 
-        <div v-else class="category-grid">
-            <NuxtLink
-                v-for="cat in categories"
-                :key="cat.id"
-                :to="{ path: '/catalog', query: { category: cat.name } }"
-                class="category-item"
+        <!-- Swiper Slider + Animatsiya -->
+        <div v-else class="slider-container">
+            <swiper
+                :modules="[SwiperAutoplay, SwiperFreeMode]"
+                :slides-per-view="'auto'"
+                :space-between="16"
+                :free-mode="true"
+                :grab-cursor="true"
+                class="category-swiper"
             >
-                <div class="category-image">
-                    <img
-                        :src="cat.image_url"
-                        :alt="cat.name"
-                        loading="lazy"
-                        @error="onImageError"
-                    />
-                </div>
-                <span class="category-name">{{ cat.name }}</span>
-            </NuxtLink>
+                <swiper-slide
+                    v-for="(cat, index) in categories"
+                    :key="cat.id"
+                    class="category-slide"
+                >
+                    <NuxtLink
+                        :to="{
+                            path: '/catalog',
+                            query: { category: cat.name },
+                        }"
+                        class="category-card animate-card"
+                        :style="{ animationDelay: `${(index % 6) * 100}ms` }"
+                    >
+                        <p class="category-name">{{ cat.name }}</p>
+                        <div class="image-wrapper">
+                            <img
+                                :src="cat.image_url"
+                                :alt="cat.name"
+                                loading="lazy"
+                                @error="onImageError"
+                            />
+                        </div>
+                    </NuxtLink>
+                </swiper-slide>
+            </swiper>
         </div>
     </section>
 </template>
 
 <script setup lang="ts">
+import { Swiper, SwiperSlide } from "swiper/vue";
+import {
+    Autoplay as SwiperAutoplay,
+    FreeMode as SwiperFreeMode,
+} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/free-mode";
+
 import { useCategoriesStore } from "~/stores/catalog/categories";
+import type { Lang } from "~/composables/catalog/useCategories";
+
+const { t, locale } = useI18n();
 
 interface Props {
     title?: string;
 }
-withDefaults(defineProps<Props>(), {
-    title: "Kategoriyalar",
+const props = withDefaults(defineProps<Props>(), {
+    title: undefined,
 });
+const title = computed(() => props.title ?? t("category.title"));
 
 const store = useCategoriesStore();
 
-await store.fetchAll(); // agar allaqachon yuklangan bo'lsa, qayta so'rov yubormaydi
+await store.fetchAll(false, locale.value as Lang);
+
+watch(locale, (newLocale) => {
+    store.fetchAll(false, newLocale as Lang);
+});
 
 const categories = computed(() => store.items);
 const pending = computed(() => store.loading);
@@ -60,106 +96,139 @@ const PLACEHOLDER_IMG =
       <circle cx="80" cy="80" r="12" fill="#D4D4D8"/>
     </svg>
   `);
+
 function onImageError(e: Event) {
     const img = e.target as HTMLImageElement;
-    img.src = PLACEHOLDER_IMG; // zaxira rasm, /public/images/ ichiga qo'ying
+    img.src = PLACEHOLDER_IMG;
 }
 </script>
 
 <style scoped>
-.category-grid-wrapper {
-    max-width: 960px;
+.category-slider-wrapper {
+    max-width: 1200px;
     margin: 0 auto;
     padding: 24px 16px;
 }
 
-.category-grid-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
+.category-title {
+    font-size: 20px;
+    font-weight: 700;
     margin-bottom: 20px;
     color: #1a1a1a;
 }
 
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+.category-swiper {
+    overflow: visible;
+    padding-bottom: 8px;
 }
 
-@media (max-width: 768px) {
-    .category-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+.category-slide {
+    width: 220px;
+    flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
-    .category-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-}
-
-.category-item {
+/* Karta konteyneri */
+.category-card {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.category-image {
+    align-items: flex-start;
     width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #f4f4f5;
+    height: 150px;
+    padding: 20px;
+    border-radius: 24px;
+    background-color: #eef0f5; /* Rasmdagi och kulrang-binafsharang fon */
+    text-decoration: none;
+    overflow: hidden; /* Rasm pastdan va o'ngdan kartaning doira burchagiga mos kesiladi */
+    box-sizing: border-box;
     transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
-.category-item:hover .category-image {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
 }
 
-.category-image img {
+/* Sarlavha */
+.category-name {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b2e35;
+    line-height: 1.2;
+    max-width: 48%; /* Matn gul bilan to'qnashmasligi uchun */
+}
+
+/* Katta rasm konteyneri */
+.image-wrapper {
+    position: absolute;
+    right: -10px;
+    bottom: -15px;
+    width: 200px; /* Kattalashtirilgan kenglik */
+    height: 190px; /* Kartaning bo'yidan (150px) balandroq */
+    z-index: 1;
+    pointer-events: none;
+}
+
+.image-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Guldasta cho'zilmay, asl nisbatda to'liq ko'rinadi */
+    object-position: right bottom;
     display: block;
 }
-
-.category-name {
-    margin-top: 8px;
-    font-size: 13px;
-    text-align: center;
-    color: #333;
-    line-height: 1.3;
+/* Kirish animatsiyasi (fade-up effekti) */
+.animate-card {
+    opacity: 0;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Skeleton loading holati */
-.skeleton .skeleton-box {
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Skeleton Loading */
+.skeleton-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: hidden;
+}
+
+.skeleton-card {
+    flex: 0 0 220px;
+    position: relative;
+    background: #eaeaea;
+}
+
+.skeleton-text {
+    width: 50%;
+    height: 16px;
+    border-radius: 6px;
     background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
 }
 
-.skeleton .skeleton-text {
-    margin-top: 8px;
-    width: 60%;
-    height: 12px;
-    border-radius: 4px;
+.skeleton-circle {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
     background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
-}
-
-.category-empty {
-    text-align: center;
-    color: #888;
-    padding: 40px 0;
 }
 
 @keyframes shimmer {
@@ -169,5 +238,11 @@ function onImageError(e: Event) {
     100% {
         background-position: -200% 0;
     }
+}
+
+.category-empty {
+    text-align: center;
+    color: #888;
+    padding: 40px 0;
 }
 </style>

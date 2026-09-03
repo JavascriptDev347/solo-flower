@@ -3,7 +3,7 @@
         v-if="!loaded || slides.length"
         class="relative rounded-2xl bg-linear-to-br from-brand-cream to-brand-cream-dark overflow-hidden"
         :aria-busy="!loaded"
-        aria-label="Bosh banner"
+        :aria-label="t('hero.bannerAria')"
     >
         <div
             class="max-w-7xl mx-auto px-6 py-10 flex flex-col-reverse md:flex-row items-center gap-8 min-h-85 "
@@ -69,7 +69,7 @@
                 v-for="(item, i) in slides"
                 :key="item.image"
                 type="button"
-                :aria-label="`${i + 1}-slayd`"
+                :aria-label="t('hero.slideAria', { n: i + 1 })"
                 class="size-2 rounded-full transition-colors"
                 :class="
                     loaded && i === activeIndex
@@ -90,7 +90,9 @@
 // holda keladi, shuning uchun qo'shimcha saralash shart emas.
 import { useEventsStore } from "~/stores/catalog/events";
 import { useCategoriesStore } from "~/stores/catalog/categories";
+import type { Lang } from "~/composables/catalog/useCategories";
 
+const { t, locale } = useI18n();
 const store = useEventsStore();
 const categoriesStore = useCategoriesStore();
 
@@ -109,11 +111,19 @@ function goToCategory() {
     navigateTo({ path: "/catalog", query: { category: categoryName.value } });
 }
 
+watch(locale, (newLocale) => {
+    store.fetchAll(false, newLocale as Lang);
+    categoriesStore.fetchAll(false, newLocale as Lang);
+});
+
 let intervalId: ReturnType<typeof setInterval> | undefined;
 
 onMounted(async () => {
     try {
-        await Promise.all([store.fetchAll(), categoriesStore.fetchAll()]);
+        await Promise.all([
+            store.fetchAll(false, locale.value as Lang),
+            categoriesStore.fetchAll(false, locale.value as Lang),
+        ]);
     } finally {
         loaded.value = true;
     }

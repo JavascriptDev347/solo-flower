@@ -1,0 +1,142 @@
+{
+  "header": {
+    "deliveryLabel": "Delivery:",
+    "deliveryCity": "Tashkent city",
+    "trackOrder": "Track order",
+    "contactUs": "Contact us",
+    "searchPlaceholder": "Search for flowers at Shukufa...",
+    "openSearchAria": "Open search",
+    "searchLabel": "Search:",
+    "homeAria": "Shukufa — home page",
+    "login": "Sign in",
+    "wishlistAria": "Wishlist",
+    "cartAria": "Cart",
+    "menuAria": "Menu",
+    "closeMenuAria": "Close menu",
+    "logoutAria": "Sign out",
+    "profile": "Profile",
+    "myOrders": "My orders",
+    "adminPanel": "Admin panel",
+    "logout": "Sign out",
+    "allCategories": "All categories",
+    "todayDelivery": "Same-day delivery",
+    "valentinesDay": "Valentine's Day",
+    "condolenceBouquets": "Condolence bouquets",
+    "giftBouquets": "Gift bouquets",
+    "whiteFlowers": "White flowers",
+    "language": "Language"
+  },
+  "footer": {
+    "phoneLabel": "Phone:",
+    "hoursLabel": "Working hours:",
+    "rights": "All rights reserved — Shukufa © 2026",
+    "about": {
+      "title": "About us",
+      "links": ["About Shukufa", "FAQ", "Contact", "Customer reviews", "Partnership"]
+    },
+    "quick": {
+      "title": "Quick links",
+      "links": ["Best sellers", "Gift flowers", "Condolence flowers", "Discounts", "Blog"]
+    },
+    "categories": {
+      "title": "Categories",
+      "links": ["Bouquets", "Vase flowers", "Sunflowers", "Roses", "Orchids"]
+    },
+    "help": {
+      "title": "Help",
+      "links": ["Delivery", "Payment methods", "Returns", "Privacy policy", "Terms of use"]
+    }
+  },
+  "hero": {
+    "bannerAria": "Main banner",
+    "slideAria": "Slide {n}"
+  },
+  "home": {
+    "title": "The most beautiful flowers for every moment",
+    "subtitle": "Order fresh, high-quality flowers for your loved ones today."
+  },
+  "mobileTabBar": {
+    "navAria": "Mobile navigation",
+    "home": "Home",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "profile": "Profile"
+  },
+  "category": {
+    "title": "Categories",
+    "empty": "No categories found"
+  },
+  "product": {
+    "title": "Products",
+    "empty": "No products found",
+    "unavailable": "Out of stock",
+    "discount": "Sale",
+    "addToCart": "Add to cart",
+    "loginToAddToCart": "Please sign in to add items to your cart",
+    "addedToCart": "\"{name}\" was added to your cart",
+    "wishlistSoon": "\"{name}\" — wishlist feature is coming soon",
+    "backToCatalog": "Back to catalog",
+    "notFoundTitle": "Product not found",
+    "notFoundSubtitle": "The link may be incorrect or the product has been removed",
+    "soldCount": "· {count} sold",
+    "available": "In stock",
+    "unavailableLong": "Temporarily out of stock",
+    "inStock": "{count} in stock",
+    "order": "Order now",
+    "description": "Description",
+    "reviews": "Reviews ({count})",
+    "reviewsSoon": "The review feature is coming soon.",
+    "pageTitleSuffix": "Catalog",
+    "pageTitleFallback": "Product"
+  },
+  "catalog": {
+    "categoryLabel": "Category",
+    "empty": "No products yet",
+    "emptySubtitle": "Products for \"{category}\" will be added soon",
+    "pageTitleFallback": "Catalog"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "submitting": "Signing in...",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up"
+    },
+    "register": {
+      "title": "Sign up",
+      "subtitle": "Create a new account and start shopping",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "At least 6 characters",
+      "emailInvalid": "Invalid email format",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "submitting": "Submitting...",
+      "submit": "Sign up",
+      "success": "You have successfully signed up, please sign in now",
+      "haveAccount": "Already have an account?",
+      "login": "Sign in"
+    }
+  },
+  "notify": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Info"
+  },
+  "api": {
+    "status400": "There is an error in the submitted data",
+    "status401": "Session expired, please sign in again",
+    "status403": "You don't have permission for this action",
+    "status404": "The requested resource was not found",
+    "status409": "This data already exists",
+    "status500": "Server error, please try again later",
+    "unknownError": "An unexpected error occurred",
+    "networkError": "Could not connect to the server",
+    "sessionExpired": "Session expired, please sign in again",
+    "serverIssue": "The server is having issues, please try again later"
+  }
+}

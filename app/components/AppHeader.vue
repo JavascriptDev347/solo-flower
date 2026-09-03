@@ -10,10 +10,10 @@
                     class="inline-flex items-center gap-1.5 hover:text-brand-accent transition-colors"
                 >
                     <UIcon name="i-lucide-map-pin" class="size-3.5" />
-                    <span>Yetkazib berish:</span>
-                    <strong class="text-stone-700 font-semibold"
-                        >Toshkent shahri</strong
-                    >
+                    <span>{{ t("header.deliveryLabel") }}</span>
+                    <strong class="text-stone-700 font-semibold">{{
+                        t("header.deliveryCity")
+                    }}</strong>
                     <UIcon name="i-lucide-chevron-down" class="size-3" />
                 </button>
 
@@ -23,13 +23,13 @@
                     to="#"
                     class="hover:text-brand-accent transition-colors"
                 >
-                    Buyurtmani kuzatish
+                    {{ t("header.trackOrder") }}
                 </NuxtLink>
                 <NuxtLink
                     to="#"
                     class="hover:text-brand-accent transition-colors"
                 >
-                    Biz bilan bog'lanish
+                    {{ t("header.contactUs") }}
                 </NuxtLink>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <NuxtLink
                 to="/"
                 class="hidden md:flex items-center gap-2.5 shrink-0"
-                aria-label="Shukufa — bosh sahifa"
+                :aria-label="t('header.homeAria')"
             >
                 <span
                     class="size-9 rounded-full bg-brand-cream text-brand-accent flex items-center justify-center"
@@ -59,7 +59,7 @@
                 v-model="query"
                 icon="i-lucide-search"
                 size="lg"
-                placeholder="Shukufada gul qidiring..."
+                :placeholder="t('header.searchPlaceholder')"
                 class="hidden md:flex flex-1 max-w-xl"
                 :ui="{ base: 'rounded-full bg-stone-50' }"
             />
@@ -68,14 +68,14 @@
             <button
                 type="button"
                 class="md:hidden flex-1 h-11 flex items-center gap-2 px-4 rounded-full bg-brand-cream border border-brand-cream-dark text-sm text-stone-500"
-                aria-label="Qidiruvni ochish"
+                :aria-label="t('header.openSearchAria')"
             >
                 <UIcon
                     name="i-lucide-search"
                     class="size-4 shrink-0 text-stone-500"
                 />
                 <span class="truncate">
-                    Qidirish:
+                    {{ t("header.searchLabel") }}
                     <strong class="text-brand-accent font-semibold"
                         >Shukufa</strong
                     >
@@ -84,13 +84,15 @@
 
             <!-- Amallar: desktopda to'liq, mobilda faqat burger -->
             <div class="hidden md:flex items-center gap-4 shrink-0">
+                <AppLocaleSwitcher />
+
                 <!-- Login qilinmagan holat -->
                 <UButton
                     v-if="!authStore.isAuthenticated"
                     variant="ghost"
                     color="neutral"
                     icon="i-lucide-user"
-                    label="Kirish"
+                    :label="t('header.login')"
                     class="rounded-full"
                     @click="navigateTo('/auth/login')"
                 />
@@ -120,7 +122,7 @@
                     icon="i-lucide-heart"
                     square
                     class="rounded-full"
-                    aria-label="Sevimlilar"
+                    :aria-label="t('header.wishlistAria')"
                 />
                 <UChip
                     :text="cartCount"
@@ -134,7 +136,7 @@
                         icon="i-lucide-shopping-cart"
                         square
                         class="rounded-full"
-                        aria-label="Savat"
+                        :aria-label="t('header.cartAria')"
                     />
                 </UChip>
             </div>
@@ -145,7 +147,7 @@
                 color="neutral"
                 square
                 class="md:hidden rounded-full shrink-0"
-                aria-label="Menyu"
+                :aria-label="t('header.menuAria')"
                 @click="isMenuOpen = true"
             />
         </div>
@@ -178,7 +180,7 @@
                         color="neutral"
                         square
                         class="rounded-full"
-                        aria-label="Menyuni yopish"
+                        :aria-label="t('header.closeMenuAria')"
                         @click="isMenuOpen = false"
                     />
                 </div>
@@ -186,6 +188,7 @@
 
             <template #body>
                 <div class="space-y-6">
+                    <AppLocaleSwitcher />
                     <!-- Foydalanuvchi holati: mobil menyu tepasida -->
                     <div
                         v-if="authStore.isAuthenticated"
@@ -209,7 +212,7 @@
                             color="error"
                             square
                             size="sm"
-                            aria-label="Chiqish"
+                            :aria-label="t('header.logoutAria')"
                             @click="onLogout"
                         />
                     </div>
@@ -217,7 +220,7 @@
                     <UButton
                         v-else
                         icon="i-lucide-user"
-                        label="Kirish"
+                        :label="t('header.login')"
                         block
                         variant="outline"
                         color="neutral"
@@ -231,58 +234,58 @@
                     >
                         <span class="inline-flex items-center gap-2">
                             <UIcon name="i-lucide-map-pin" class="size-4" />
-                            Yetkazib berish:
-                            <strong class="text-stone-800 font-semibold"
-                                >Toshkent shahri</strong
-                            >
+                            {{ t("header.deliveryLabel") }}
+                            <strong class="text-stone-800 font-semibold">{{
+                                t("header.deliveryCity")
+                            }}</strong>
                         </span>
                         <UIcon name="i-lucide-chevron-down" class="size-4" />
                     </button>
 
                     <UButton
                         icon="i-lucide-menu"
-                        label="Barcha kategoriyalar"
+                        :label="t('header.allCategories')"
                         block
                         class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-xl"
                     />
 
                     <ul class="space-y-1 text-sm font-medium text-stone-700">
                         <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5"
-                                >Bugun yetkazib berish</NuxtLink
-                            >
+                            <NuxtLink to="#" class="block px-2 py-2.5">{{
+                                t("header.todayDelivery")
+                            }}</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5"
-                                >Sevgi kuni</NuxtLink
-                            >
+                            <NuxtLink to="#" class="block px-2 py-2.5">{{
+                                t("header.valentinesDay")
+                            }}</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5"
-                                >Ta'ziya guldastalari</NuxtLink
-                            >
+                            <NuxtLink to="#" class="block px-2 py-2.5">{{
+                                t("header.condolenceBouquets")
+                            }}</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5"
-                                >Tabrik guldastalari</NuxtLink
-                            >
+                            <NuxtLink to="#" class="block px-2 py-2.5">{{
+                                t("header.giftBouquets")
+                            }}</NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5"
-                                >Oq gullar</NuxtLink
-                            >
+                            <NuxtLink to="#" class="block px-2 py-2.5">{{
+                                t("header.whiteFlowers")
+                            }}</NuxtLink>
                         </li>
                     </ul>
 
                     <div
                         class="border-t border-stone-100 pt-4 space-y-1 text-sm text-stone-500"
                     >
-                        <NuxtLink to="#" class="block px-2 py-2"
-                            >Buyurtmani kuzatish</NuxtLink
-                        >
-                        <NuxtLink to="#" class="block px-2 py-2"
-                            >Biz bilan bog'lanish</NuxtLink
-                        >
+                        <NuxtLink to="#" class="block px-2 py-2">{{
+                            t("header.trackOrder")
+                        }}</NuxtLink>
+                        <NuxtLink to="#" class="block px-2 py-2">{{
+                            t("header.contactUs")
+                        }}</NuxtLink>
                     </div>
                 </div>
             </template>
@@ -291,6 +294,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 const query = ref("");
 const cartCount = 2;
 const isMenuOpen = ref(false);
@@ -300,19 +304,19 @@ const authStore = useAuthStore();
 const userMenuItems = computed(() => [
     [
         {
-            label: "Profil",
+            label: t("header.profile"),
             icon: "i-lucide-user-round",
             to: "/profile",
         },
         {
-            label: "Buyurtmalarim",
+            label: t("header.myOrders"),
             icon: "i-lucide-package",
             to: "/orders",
         },
         ...(authStore.isAdmin
             ? [
                   {
-                      label: "Admin panel",
+                      label: t("header.adminPanel"),
                       icon: "i-lucide-shield",
                       to: "/admin",
                   },
@@ -321,7 +325,7 @@ const userMenuItems = computed(() => [
     ],
     [
         {
-            label: "Chiqish",
+            label: t("header.logout"),
             icon: "i-lucide-log-out",
             color: "error" as const,
             onSelect: onLogout,

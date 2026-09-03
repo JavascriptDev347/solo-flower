@@ -1,22 +1,40 @@
-import type { Event } from "~/types/event";
+import type { Event, AdminEvent } from "~/types/event";
 
-export type { Event };
+export type { Event, AdminEvent };
+
+export type Lang = "uz" | "eng" | "ru";
 
 export interface CreateEventPayload {
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
-  cta?: string;
+  eyebrow_uz?: string;
+  eyebrow_eng?: string;
+  eyebrow_ru?: string;
+  title_uz: string;
+  title_eng: string;
+  title_ru: string;
+  subtitle_uz?: string;
+  subtitle_eng?: string;
+  subtitle_ru?: string;
+  cta_uz?: string;
+  cta_eng?: string;
+  cta_ru?: string;
   category_id: string;
   is_root?: boolean;
   image: File;
 }
 
 export interface UpdateEventPayload {
-  eyebrow?: string;
-  title?: string;
-  subtitle?: string;
-  cta?: string;
+  eyebrow_uz?: string;
+  eyebrow_eng?: string;
+  eyebrow_ru?: string;
+  title_uz?: string;
+  title_eng?: string;
+  title_ru?: string;
+  subtitle_uz?: string;
+  subtitle_eng?: string;
+  subtitle_ru?: string;
+  cta_uz?: string;
+  cta_eng?: string;
+  cta_ru?: string;
   category_id?: string;
   is_root?: boolean;
 }
@@ -24,18 +42,27 @@ export interface UpdateEventPayload {
 export function useEvents() {
   const { get, put, delete: del, upload } = useApi();
 
-  const list = () => get<Event[]>("/events");
+  const list = (lang?: Lang) => get<Event[]>("/events", lang ? { lang } : undefined);
 
-  const getById = (id: string) => get<Event>(`/events/${id}`);
+  const getById = (id: string, lang?: Lang) =>
+    get<Event>(`/events/${id}`, lang ? { lang } : undefined);
 
-  const fetchAllAdmin = () => get<Event[]>("/events/admin");
+  const fetchAllAdmin = () => get<AdminEvent[]>("/events/admin");
 
   const create = (payload: CreateEventPayload) => {
     const formData = new FormData();
-    if (payload.eyebrow) formData.append("eyebrow", payload.eyebrow);
-    formData.append("title", payload.title);
-    if (payload.subtitle) formData.append("subtitle", payload.subtitle);
-    if (payload.cta) formData.append("cta", payload.cta);
+    if (payload.eyebrow_uz) formData.append("eyebrow_uz", payload.eyebrow_uz);
+    if (payload.eyebrow_eng) formData.append("eyebrow_eng", payload.eyebrow_eng);
+    if (payload.eyebrow_ru) formData.append("eyebrow_ru", payload.eyebrow_ru);
+    formData.append("title_uz", payload.title_uz);
+    formData.append("title_eng", payload.title_eng);
+    formData.append("title_ru", payload.title_ru);
+    if (payload.subtitle_uz) formData.append("subtitle_uz", payload.subtitle_uz);
+    if (payload.subtitle_eng) formData.append("subtitle_eng", payload.subtitle_eng);
+    if (payload.subtitle_ru) formData.append("subtitle_ru", payload.subtitle_ru);
+    if (payload.cta_uz) formData.append("cta_uz", payload.cta_uz);
+    if (payload.cta_eng) formData.append("cta_eng", payload.cta_eng);
+    if (payload.cta_ru) formData.append("cta_ru", payload.cta_ru);
     formData.append("category_id", payload.category_id);
     formData.append("is_root", payload.is_root ? "true" : "false");
     formData.append("image", payload.image);

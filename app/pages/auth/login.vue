@@ -1,12 +1,12 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <h1 class="auth-title">Tizimga kirish</h1>
-      <p class="auth-subtitle">Hisobingizga kiring</p>
+      <h1 class="auth-title">{{ t('auth.login.title') }}</h1>
+      <p class="auth-subtitle">{{ t('auth.login.subtitle') }}</p>
 
       <form class="auth-form" @submit.prevent="onSubmit">
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email">{{ t('auth.login.email') }}</label>
           <input
             id="email"
             v-model="form.email"
@@ -17,25 +17,25 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Parol</label>
+          <label for="password">{{ t('auth.login.password') }}</label>
           <input
             id="password"
             v-model="form.password"
             type="password"
-            placeholder="Parolingiz"
+            :placeholder="t('auth.login.passwordPlaceholder')"
             required
           />
         </div>
 
         <button type="submit" class="btn-primary" :disabled="loading">
           <span v-if="loading" class="spinner" />
-          <span>{{ loading ? 'Kirilmoqda...' : 'Kirish' }}</span>
+          <span>{{ loading ? t('auth.login.submitting') : t('auth.login.submit') }}</span>
         </button>
       </form>
 
       <p class="auth-footer">
-        Hisobingiz yo'qmi?
-        <NuxtLink to="/auth/register">Ro'yxatdan o'tish</NuxtLink>
+        {{ t('auth.login.noAccount') }}
+        <NuxtLink to="/auth/register">{{ t('auth.login.register') }}</NuxtLink>
       </p>
     </div>
   </div>
@@ -46,6 +46,7 @@ import { useAuthStore } from '~/stores/identity/auth'
 
 definePageMeta({ middleware: 'guest' })
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const route = useRoute()
 const router = useRouter()

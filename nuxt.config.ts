@@ -13,16 +13,26 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ["./stores/**"],
   },
-  modules: ["@nuxt/ui", "@pinia/nuxt", "nuxt-auth-utils"],
+  modules: ["@nuxt/ui", "@pinia/nuxt", "nuxt-auth-utils", "@nuxtjs/i18n"],
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "light",
     fallback: "light",
   },
+  i18n: {
+    locales: [
+      { code: "uz", iso: "uz-UZ", name: "O'zbekcha", file: "uz.json" },
+      { code: "eng", iso: "en-US", name: "English", file: "eng.json" },
+      { code: "ru", iso: "ru-RU", name: "Русский", file: "ru.json" },
+    ],
+    langDir: "locales",
+    defaultLocale: "uz",
+    strategy: "prefix_except_default",
+    detectBrowserLanguage: false,
+  },
   app: {
     head: {
       htmlAttrs: {
-        lang: "uz",
         dir: "ltr", // Asl (arabcha/fors) versiya RTL edi — bizniki chapdan o'ngga
       },
       title: "Shukufa — Gullar do'koni",

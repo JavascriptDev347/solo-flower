@@ -2,7 +2,7 @@
     <nav
         class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-stone-200 px-2 pt-2 flex items-center justify-around"
         style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom))"
-        aria-label="Mobil navigatsiya"
+        :aria-label="t('mobileTabBar.navAria')"
     >
         <NuxtLink
             v-for="item in items"
@@ -23,11 +23,23 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 // Tartib chapdan o'ngga: Bosh sahifa (faol) → Savat → Sevimlilar → Profil
-const items = [
-    { label: "Bosh sahifa", icon: "i-lucide-home", to: "/", active: true },
-    { label: "Savat", icon: "i-lucide-shopping-cart", to: "#", active: false },
-    { label: "Sevimlilar", icon: "i-lucide-heart", to: "#", active: false },
-    { label: "Profil", icon: "i-lucide-user", to: "#", active: false },
-];
+const items = computed(() => [
+    { label: t("mobileTabBar.home"), icon: "i-lucide-home", to: "/", active: true },
+    {
+        label: t("mobileTabBar.cart"),
+        icon: "i-lucide-shopping-cart",
+        to: "#",
+        active: false,
+    },
+    {
+        label: t("mobileTabBar.wishlist"),
+        icon: "i-lucide-heart",
+        to: "#",
+        active: false,
+    },
+    { label: t("mobileTabBar.profile"), icon: "i-lucide-user", to: "#", active: false },
+]);
 </script>

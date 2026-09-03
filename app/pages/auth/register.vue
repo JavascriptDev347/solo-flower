@@ -1,14 +1,14 @@
 <template>
     <div class="auth-page">
         <div class="auth-card">
-            <h1 class="auth-title">Ro'yxatdan o'tish</h1>
+            <h1 class="auth-title">{{ t("auth.register.title") }}</h1>
             <p class="auth-subtitle">
-                Yangi hisob yarating va xarid qilishni boshlang
+                {{ t("auth.register.subtitle") }}
             </p>
 
             <form class="auth-form" @submit.prevent="onSubmit">
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">{{ t("auth.register.email") }}</label>
                     <input
                         id="email"
                         v-model="form.email"
@@ -23,12 +23,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Parol</label>
+                    <label for="password">{{ t("auth.register.password") }}</label>
                     <input
                         id="password"
                         v-model="form.password"
                         type="password"
-                        placeholder="Kamida 6 ta belgi"
+                        :placeholder="t('auth.register.passwordPlaceholder')"
                         required
                         :class="{ 'input-error': errors.password }"
                     />
@@ -40,14 +40,16 @@
                 <button type="submit" class="btn-primary" :disabled="loading">
                     <span v-if="loading" class="spinner" />
                     <span>{{
-                        loading ? "Yuborilmoqda..." : "Ro'yxatdan o'tish"
+                        loading
+                            ? t("auth.register.submitting")
+                            : t("auth.register.submit")
                     }}</span>
                 </button>
             </form>
 
             <p class="auth-footer">
-                Hisobingiz bormi?
-                <NuxtLink to="/auth/login">Kirish</NuxtLink>
+                {{ t("auth.register.haveAccount") }}
+                <NuxtLink to="/auth/login">{{ t("auth.register.login") }}</NuxtLink>
             </p>
         </div>
     </div>
@@ -58,6 +60,7 @@ import { useAuthStore } from '~/stores/identity/auth';
 
 definePageMeta({ middleware: "guest" });
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const notify = useNotify();
 const router = useRouter();
@@ -73,11 +76,11 @@ function validate(): boolean {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
-        errors.email = "Email formati noto'g'ri";
+        errors.email = t("auth.register.emailInvalid");
         valid = false;
     }
     if (form.password.length < 6) {
-        errors.password = "Parol kamida 6 ta belgidan iborat bo'lishi kerak";
+        errors.password = t("auth.register.passwordTooShort");
         valid = false;
     }
     return valid;
@@ -91,9 +94,7 @@ async function onSubmit() {
             email: form.email,
             password: form.password,
         });
-        notify.success(
-            "Muvaffaqiyatli ro'yxatdan o'tdingiz, endi tizimga kiring",
-        );
+        notify.success(t("auth.register.success"));
         router.push("/auth/login");
     } catch (e) {
         // xatolik notification useApi ichida avtomatik chiqadi

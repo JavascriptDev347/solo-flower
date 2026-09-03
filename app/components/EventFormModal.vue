@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Event } from "~/types/event";
+import type { AdminEvent } from "~/types/event";
 import { ApiError } from "~/types/api";
 import { useEventsStore } from "~/stores/catalog/events";
 import { useCategoriesStore } from "~/stores/catalog/categories";
 
 const props = defineProps<{
     modelValue: boolean;
-    event: Event | null;
+    event: AdminEvent | null;
 }>();
 
 const emit = defineEmits<{
@@ -20,10 +20,18 @@ const notify = useNotify();
 
 const isEdit = computed(() => !!props.event);
 
-const eyebrow = ref("");
-const title = ref("");
-const subtitle = ref("");
-const cta = ref("");
+const eyebrowUz = ref("");
+const eyebrowEng = ref("");
+const eyebrowRu = ref("");
+const titleUz = ref("");
+const titleEng = ref("");
+const titleRu = ref("");
+const subtitleUz = ref("");
+const subtitleEng = ref("");
+const subtitleRu = ref("");
+const ctaUz = ref("");
+const ctaEng = ref("");
+const ctaRu = ref("");
 const categoryId = ref("");
 const isRoot = ref(false);
 const imageFile = ref<File | null>(null);
@@ -36,14 +44,23 @@ watch(
     () => props.modelValue,
     (open) => {
         if (open) {
-            eyebrow.value = props.event?.eyebrow ?? "";
-            title.value = props.event?.title ?? "";
-            subtitle.value = props.event?.subtitle ?? "";
-            cta.value = props.event?.cta ?? "";
-            categoryId.value = props.event?.category_id ?? "";
-            isRoot.value = props.event?.is_root ?? false;
+            const e = props.event;
+            eyebrowUz.value = e?.eyebrow_uz ?? "";
+            eyebrowEng.value = e?.eyebrow_eng ?? "";
+            eyebrowRu.value = e?.eyebrow_ru ?? "";
+            titleUz.value = e?.title_uz ?? "";
+            titleEng.value = e?.title_eng ?? "";
+            titleRu.value = e?.title_ru ?? "";
+            subtitleUz.value = e?.subtitle_uz ?? "";
+            subtitleEng.value = e?.subtitle_eng ?? "";
+            subtitleRu.value = e?.subtitle_ru ?? "";
+            ctaUz.value = e?.cta_uz ?? "";
+            ctaEng.value = e?.cta_eng ?? "";
+            ctaRu.value = e?.cta_ru ?? "";
+            categoryId.value = e?.category_id ?? "";
+            isRoot.value = e?.is_root ?? false;
             imageFile.value = null;
-            imagePreview.value = props.event?.image ?? null;
+            imagePreview.value = e?.image ?? null;
             error.value = "";
             categoriesStore.fetchAll();
         }
@@ -73,8 +90,8 @@ function close() {
 }
 
 async function onSubmit() {
-    if (!title.value.trim()) {
-        error.value = "Sarlavha kiritilishi shart";
+    if (!titleUz.value.trim() || !titleEng.value.trim() || !titleRu.value.trim()) {
+        error.value = "Sarlavha barcha tillarda kiritilishi shart";
         return;
     }
     if (!categoryId.value) {
@@ -92,20 +109,36 @@ async function onSubmit() {
     try {
         if (isEdit.value && props.event) {
             await store.update(props.event.id, {
-                eyebrow: eyebrow.value.trim(),
-                title: title.value.trim(),
-                subtitle: subtitle.value.trim(),
-                cta: cta.value.trim(),
+                eyebrow_uz: eyebrowUz.value.trim(),
+                eyebrow_eng: eyebrowEng.value.trim(),
+                eyebrow_ru: eyebrowRu.value.trim(),
+                title_uz: titleUz.value.trim(),
+                title_eng: titleEng.value.trim(),
+                title_ru: titleRu.value.trim(),
+                subtitle_uz: subtitleUz.value.trim(),
+                subtitle_eng: subtitleEng.value.trim(),
+                subtitle_ru: subtitleRu.value.trim(),
+                cta_uz: ctaUz.value.trim(),
+                cta_eng: ctaEng.value.trim(),
+                cta_ru: ctaRu.value.trim(),
                 category_id: categoryId.value,
                 is_root: isRoot.value,
             });
             notify.success("Event yangilandi");
         } else {
             await store.create({
-                eyebrow: eyebrow.value.trim(),
-                title: title.value.trim(),
-                subtitle: subtitle.value.trim(),
-                cta: cta.value.trim(),
+                eyebrow_uz: eyebrowUz.value.trim() || undefined,
+                eyebrow_eng: eyebrowEng.value.trim() || undefined,
+                eyebrow_ru: eyebrowRu.value.trim() || undefined,
+                title_uz: titleUz.value.trim(),
+                title_eng: titleEng.value.trim(),
+                title_ru: titleRu.value.trim(),
+                subtitle_uz: subtitleUz.value.trim() || undefined,
+                subtitle_eng: subtitleEng.value.trim() || undefined,
+                subtitle_ru: subtitleRu.value.trim() || undefined,
+                cta_uz: ctaUz.value.trim() || undefined,
+                cta_eng: ctaEng.value.trim() || undefined,
+                cta_ru: ctaRu.value.trim() || undefined,
                 category_id: categoryId.value,
                 is_root: isRoot.value,
                 image: imageFile.value!,
@@ -131,39 +164,87 @@ async function onSubmit() {
                 </h3>
 
                 <div class="form-group">
-                    <label>Eyebrow (kichik ustki matn)</label>
+                    <label>Eyebrow (o'zbekcha)</label>
                     <input
-                        v-model="eyebrow"
+                        v-model="eyebrowUz"
                         type="text"
                         placeholder="Masalan: Bugungi taklif"
                     />
                 </div>
+                <div class="form-group">
+                    <label>Eyebrow (inglizcha)</label>
+                    <input
+                        v-model="eyebrowEng"
+                        type="text"
+                        placeholder="e.g. Today's offer"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Eyebrow (ruscha)</label>
+                    <input
+                        v-model="eyebrowRu"
+                        type="text"
+                        placeholder="Например: Предложение дня"
+                    />
+                </div>
 
                 <div class="form-group">
-                    <label>Sarlavha</label>
+                    <label>Sarlavha (o'zbekcha) *</label>
                     <input
-                        v-model="title"
+                        v-model="titleUz"
                         type="text"
                         placeholder="Masalan: Sevimlilar uchun gullar"
                     />
                 </div>
-
                 <div class="form-group">
-                    <label>Subtitle</label>
+                    <label>Sarlavha (inglizcha) *</label>
                     <input
-                        v-model="subtitle"
+                        v-model="titleEng"
                         type="text"
-                        placeholder="Sarlavha ostidagi matn"
+                        placeholder="e.g. Flowers for your loved ones"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Sarlavha (ruscha) *</label>
+                    <input
+                        v-model="titleRu"
+                        type="text"
+                        placeholder="Например: Цветы для любимых"
                     />
                 </div>
 
                 <div class="form-group">
-                    <label>Tugma matni (CTA)</label>
+                    <label>Subtitle (o'zbekcha)</label>
                     <input
-                        v-model="cta"
+                        v-model="subtitleUz"
+                        type="text"
+                        placeholder="Sarlavha ostidagi matn"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Subtitle (inglizcha)</label>
+                    <input v-model="subtitleEng" type="text" />
+                </div>
+                <div class="form-group">
+                    <label>Subtitle (ruscha)</label>
+                    <input v-model="subtitleRu" type="text" />
+                </div>
+
+                <div class="form-group">
+                    <label>Tugma matni — CTA (o'zbekcha)</label>
+                    <input
+                        v-model="ctaUz"
                         type="text"
                         placeholder="Masalan: Mahsulotlarni ko'rish"
                     />
+                </div>
+                <div class="form-group">
+                    <label>Tugma matni — CTA (inglizcha)</label>
+                    <input v-model="ctaEng" type="text" />
+                </div>
+                <div class="form-group">
+                    <label>Tugma matni — CTA (ruscha)</label>
+                    <input v-model="ctaRu" type="text" />
                 </div>
 
                 <div class="form-group">

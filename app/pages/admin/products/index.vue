@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
-import type { Product } from "~/types/product";
+import type { AdminProduct } from "~/types/product";
 
 definePageMeta({
     middleware: "admin",
@@ -22,9 +22,9 @@ const pageSize = ref(20);
 const pagination = computed(() => store.adminPagination);
 
 const isModalOpen = ref(false);
-const selectedProduct = ref<Product | null>(null);
+const selectedProduct = ref<AdminProduct | null>(null);
 
-const deleteTarget = ref<Product | null>(null);
+const deleteTarget = ref<AdminProduct | null>(null);
 const isDeleting = ref(false);
 
 let searchTimeout: ReturnType<typeof setTimeout>;
@@ -81,7 +81,7 @@ function openCreate() {
     isModalOpen.value = true;
 }
 
-function openEdit(product: Product) {
+function openEdit(product: AdminProduct) {
     selectedProduct.value = product;
     isModalOpen.value = true;
 }
@@ -112,7 +112,8 @@ onMounted(() => {
             <div>
                 <h1 class="page-title">Mahsulotlar</h1>
                 <p class="page-subtitle">
-                    Jami: {{ pagination?.total ?? filteredProducts.length }} ta
+                    Jami:
+                    {{ pagination?.total_items ?? filteredProducts.length }} ta
                 </p>
             </div>
             <button class="btn-primary" @click="openCreate">
@@ -175,7 +176,7 @@ onMounted(() => {
                             />
                         </td>
                         <td class="cell-name">
-                            {{ row.name }}
+                            {{ row.name_uz }}
                             <div class="cell-muted">{{ row.slug }}</div>
                         </td>
                         <td class="cell-muted">
@@ -275,7 +276,7 @@ onMounted(() => {
                     alt=""
                 />
                 <div class="mobile-card-info">
-                    <p class="cell-name">{{ row.name }}</p>
+                    <p class="cell-name">{{ row.name_uz }}</p>
                     <div class="price-final">
                         {{
                             formatPrice(
@@ -360,7 +361,7 @@ onMounted(() => {
                 <div class="modal-card modal-sm">
                     <h3 class="modal-title">Mahsulotni o'chirish</h3>
                     <p class="modal-text">
-                        <strong>{{ deleteTarget.name }}</strong> mahsulotini
+                        <strong>{{ deleteTarget.name_uz }}</strong> mahsulotini
                         o'chirmoqchimisiz?
                     </p>
                     <div class="modal-footer">

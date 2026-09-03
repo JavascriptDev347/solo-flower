@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Category } from "~/types/category";
+import type { AdminCategory } from "~/types/category";
 import { ApiError } from "~/types/api";
 import { useCategoriesStore } from "~/stores/catalog/categories";
 
 const props = defineProps<{
     modelValue: boolean;
-    category: Category | null;
+    category: AdminCategory | null;
 }>();
 
 const emit = defineEmits<{
@@ -17,7 +17,9 @@ const store = useCategoriesStore();
 const notify = useNotify();
 
 const isEdit = computed(() => !!props.category);
-const name = ref("");
+const nameUz = ref("");
+const nameEng = ref("");
+const nameRu = ref("");
 const imageFile = ref<File | null>(null);
 const imagePreview = ref<string | null>(null);
 const isSubmitting = ref(false);
@@ -28,7 +30,9 @@ watch(
     () => props.modelValue,
     (open) => {
         if (open) {
-            name.value = props.category?.name ?? "";
+            nameUz.value = props.category?.name_uz ?? "";
+            nameEng.value = props.category?.name_eng ?? "";
+            nameRu.value = props.category?.name_ru ?? "";
             imageFile.value = null;
             imagePreview.value = props.category?.image_url ?? null;
             error.value = "";
@@ -59,8 +63,8 @@ function close() {
 }
 
 async function onSubmit() {
-    if (!name.value.trim()) {
-        error.value = "Nomi kiritilishi shart";
+    if (!nameUz.value.trim() || !nameEng.value.trim() || !nameRu.value.trim()) {
+        error.value = "Nomi barcha tillarda kiritilishi shart";
         return;
     }
     if (!isEdit.value && !imageFile.value) {
@@ -73,11 +77,17 @@ async function onSubmit() {
 
     try {
         if (isEdit.value && props.category) {
-            await store.update(props.category.id, { name: name.value.trim() });
+            await store.update(props.category.id, {
+                name_uz: nameUz.value.trim(),
+                name_eng: nameEng.value.trim(),
+                name_ru: nameRu.value.trim(),
+            });
             notify.success("Kategoriya yangilandi");
         } else {
             await store.create({
-                name: name.value.trim(),
+                name_uz: nameUz.value.trim(),
+                name_eng: nameEng.value.trim(),
+                name_ru: nameRu.value.trim(),
                 image: imageFile.value!,
             });
             notify.success("Kategoriya yaratildi");
@@ -103,11 +113,27 @@ async function onSubmit() {
                 </h3>
 
                 <div class="form-group">
-                    <label>Nomi</label>
+                    <label>Nomi (o'zbekcha)</label>
                     <input
-                        v-model="name"
+                        v-model="nameUz"
                         type="text"
                         placeholder="Masalan: Elektronika"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Nomi (inglizcha)</label>
+                    <input
+                        v-model="nameEng"
+                        type="text"
+                        placeholder="e.g. Electronics"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Nomi (ruscha)</label>
+                    <input
+                        v-model="nameRu"
+                        type="text"
+                        placeholder="Например: Электроника"
                     />
                 </div>
 

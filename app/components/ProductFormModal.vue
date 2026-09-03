@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Product } from "~/types/product";
-import { PACKAGING_TYPES, type PackagingType } from "~/types/product";
+import type { AdminProduct } from "~/types/product";
 import { ApiError } from "~/types/api";
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
@@ -8,7 +7,7 @@ import { productFormSchema, type ProductFormErrors } from "~/schemas/product";
 
 const props = defineProps<{
     modelValue: boolean;
-    product: Product | null;
+    product: AdminProduct | null;
 }>();
 
 const emit = defineEmits<{
@@ -26,12 +25,23 @@ const MAX_IMAGES = 5;
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-// Asosiy
-const name = ref("");
+// Nomi va tavsifi (3 tilda)
+const nameUz = ref("");
+const nameEng = ref("");
+const nameRu = ref("");
+const descriptionUz = ref("");
+const descriptionEng = ref("");
+const descriptionRu = ref("");
 const slug = ref("");
-const description = ref("");
 const categoryId = ref("");
-const packagingType = ref<PackagingType | "">("");
+
+// Belgi/badge (3 tilda)
+const tagUz = ref("");
+const tagEng = ref("");
+const tagRu = ref("");
+const clearTagUz = ref(false);
+const clearTagEng = ref(false);
+const clearTagRu = ref(false);
 
 // Narx
 const amount = ref<number | null>(null);
@@ -39,24 +49,13 @@ const currency = ref("UZS");
 const discountAmount = ref<number | null>(null);
 const clearDiscount = ref(false);
 
-// Xususiyatlar
-const color = ref("");
-const stemCount = ref<number | null>(null);
-const flowerTypesText = ref("");
-const freshnessLifespan = ref<number | null>(null);
-const careInstructions = ref("");
-const clearCareInstructions = ref(false);
-const occasionsText = ref("");
-const compatibleAddonsText = ref("");
-
 // Holat
 const isAvailable = ref(true);
 const rating = ref<number | null>(null);
 const stock = ref<number | null>(null);
+const soldCount = ref<number | null>(null);
 
 // Media
-const videoUrlYoutube = ref("");
-const videoUrlInstagram = ref("");
 const imageFiles = ref<File[]>([]);
 const imagePreviews = ref<string[]>([]);
 const fileInput = ref<HTMLInputElement>();
@@ -65,49 +64,38 @@ const isSubmitting = ref(false);
 const error = ref("");
 const fieldErrors = ref<ProductFormErrors>({});
 
-function toCsv(list: string[] | undefined) {
-    return list?.join(", ") ?? "";
-}
-
-function fromCsv(text: string) {
-    return text
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-}
-
 watch(
     () => props.modelValue,
     (open) => {
         if (!open) return;
 
         const p = props.product;
-        name.value = p?.name ?? "";
+        nameUz.value = p?.name_uz ?? "";
+        nameEng.value = p?.name_eng ?? "";
+        nameRu.value = p?.name_ru ?? "";
+        descriptionUz.value = p?.description_uz ?? "";
+        descriptionEng.value = p?.description_eng ?? "";
+        descriptionRu.value = p?.description_ru ?? "";
         slug.value = p?.slug ?? "";
-        description.value = p?.description ?? "";
         categoryId.value = p?.category_id ?? "";
-        packagingType.value = p?.packaging_type ?? "";
+
+        tagUz.value = p?.tag_uz ?? "";
+        tagEng.value = p?.tag_eng ?? "";
+        tagRu.value = p?.tag_ru ?? "";
+        clearTagUz.value = false;
+        clearTagEng.value = false;
+        clearTagRu.value = false;
 
         amount.value = p?.price_amount ?? null;
         currency.value = p?.price_currency ?? "UZS";
         discountAmount.value = p?.discount_amount ?? null;
         clearDiscount.value = false;
 
-        color.value = p?.color ?? "";
-        stemCount.value = p?.stem_count ?? null;
-        flowerTypesText.value = toCsv(p?.flower_types);
-        freshnessLifespan.value = p?.freshness_lifespan ?? null;
-        careInstructions.value = p?.care_instructions ?? "";
-        clearCareInstructions.value = false;
-        occasionsText.value = toCsv(p?.occasions);
-        compatibleAddonsText.value = toCsv(p?.compatible_addons);
-
         isAvailable.value = p?.is_available ?? true;
         rating.value = p?.rating ?? null;
         stock.value = p?.stock ?? null;
+        soldCount.value = p?.sold_count ?? null;
 
-        videoUrlYoutube.value = p?.video_url_youtube ?? "";
-        videoUrlInstagram.value = p?.video_url_instagram ?? "";
         imageFiles.value = [];
         imagePreviews.value = [];
 
@@ -152,16 +140,15 @@ function close() {
 
 function validate(): boolean {
     const result = productFormSchema.safeParse({
-        name: name.value,
+        nameUz: nameUz.value,
+        nameEng: nameEng.value,
+        nameRu: nameRu.value,
         categoryId: categoryId.value,
-        packagingType: packagingType.value,
         amount: amount.value,
         currency: currency.value,
         discountAmount: discountAmount.value,
         clearDiscount: clearDiscount.value,
         rating: rating.value,
-        freshnessLifespan: freshnessLifespan.value,
-        stemCount: stemCount.value,
         stock: stock.value,
     });
 
@@ -192,11 +179,12 @@ async function onSubmit() {
     try {
         if (isEdit.value && props.product) {
             await store.update(props.product.id, {
-                name: name.value.trim(),
-                description: description.value.trim() || undefined,
-                video_url_youtube: videoUrlYoutube.value.trim() || undefined,
-                video_url_instagram:
-                    videoUrlInstagram.value.trim() || undefined,
+                name_uz: nameUz.value.trim(),
+                name_eng: nameEng.value.trim(),
+                name_ru: nameRu.value.trim(),
+                description_uz: descriptionUz.value.trim() || undefined,
+                description_eng: descriptionEng.value.trim() || undefined,
+                description_ru: descriptionRu.value.trim() || undefined,
                 category_id: categoryId.value,
                 amount: amount.value!,
                 currency: currency.value.trim(),
@@ -208,42 +196,34 @@ async function onSubmit() {
                 is_available: isAvailable.value,
                 rating: rating.value ?? undefined,
                 stock: stock.value ?? undefined,
-                flower_types: fromCsv(flowerTypesText.value),
-                color: color.value.trim() || undefined,
-                stem_count: stemCount.value ?? undefined,
-                packaging_type: packagingType.value as PackagingType,
-                freshness_lifespan: freshnessLifespan.value ?? undefined,
-                care_instructions: clearCareInstructions.value
-                    ? undefined
-                    : careInstructions.value.trim() || undefined,
-                clear_care_instructions: clearCareInstructions.value,
-                occasions: fromCsv(occasionsText.value),
-                compatible_addons: fromCsv(compatibleAddonsText.value),
+                sold_count: soldCount.value ?? undefined,
+                tag_uz: clearTagUz.value ? undefined : tagUz.value.trim() || undefined,
+                tag_eng: clearTagEng.value ? undefined : tagEng.value.trim() || undefined,
+                tag_ru: clearTagRu.value ? undefined : tagRu.value.trim() || undefined,
+                clear_tag_uz: clearTagUz.value,
+                clear_tag_eng: clearTagEng.value,
+                clear_tag_ru: clearTagRu.value,
             });
             notify.success("Mahsulot yangilandi");
         } else {
             await store.create({
-                name: name.value.trim(),
-                description: description.value.trim() || undefined,
+                name_uz: nameUz.value.trim(),
+                name_eng: nameEng.value.trim(),
+                name_ru: nameRu.value.trim(),
+                description_uz: descriptionUz.value.trim() || undefined,
+                description_eng: descriptionEng.value.trim() || undefined,
+                description_ru: descriptionRu.value.trim() || undefined,
                 category_id: categoryId.value,
                 amount: amount.value!,
                 currency: currency.value.trim(),
                 discount_amount: discountAmount.value ?? undefined,
                 slug: slug.value.trim() || undefined,
-                video_url_youtube: videoUrlYoutube.value.trim() || undefined,
-                video_url_instagram:
-                    videoUrlInstagram.value.trim() || undefined,
                 is_available: isAvailable.value,
                 rating: rating.value ?? undefined,
                 stock: stock.value ?? undefined,
-                flower_types: fromCsv(flowerTypesText.value),
-                color: color.value.trim() || undefined,
-                stem_count: stemCount.value ?? undefined,
-                packaging_type: packagingType.value as PackagingType,
-                freshness_lifespan: freshnessLifespan.value ?? undefined,
-                care_instructions: careInstructions.value.trim() || undefined,
-                occasions: fromCsv(occasionsText.value),
-                compatible_addons: fromCsv(compatibleAddonsText.value),
+                tag_uz: tagUz.value.trim() || undefined,
+                tag_eng: tagEng.value.trim() || undefined,
+                tag_ru: tagRu.value.trim() || undefined,
                 images: imageFiles.value,
             });
             notify.success("Mahsulot yaratildi");
@@ -270,60 +250,68 @@ async function onSubmit() {
                     {{ isEdit ? "Mahsulotni tahrirlash" : "Yangi mahsulot" }}
                 </h3>
 
+                <!-- Nomi (3 tilda) -->
+                <div class="form-section">
+                    <h4 class="section-title">Nomi</h4>
+                    <div class="form-group">
+                        <label>Nomi (o'zbekcha) *</label>
+                        <input
+                            v-model="nameUz"
+                            type="text"
+                            :class="{ 'input-invalid': fieldErrors.nameUz }"
+                            placeholder="Masalan: 51 ta qizil atirgul"
+                        />
+                        <p v-if="fieldErrors.nameUz" class="field-error">
+                            {{ fieldErrors.nameUz }}
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomi (inglizcha) *</label>
+                        <input
+                            v-model="nameEng"
+                            type="text"
+                            :class="{ 'input-invalid': fieldErrors.nameEng }"
+                            placeholder="e.g. 51 red roses"
+                        />
+                        <p v-if="fieldErrors.nameEng" class="field-error">
+                            {{ fieldErrors.nameEng }}
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomi (ruscha) *</label>
+                        <input
+                            v-model="nameRu"
+                            type="text"
+                            :class="{ 'input-invalid': fieldErrors.nameRu }"
+                            placeholder="Например: 51 красная роза"
+                        />
+                        <p v-if="fieldErrors.nameRu" class="field-error">
+                            {{ fieldErrors.nameRu }}
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Asosiy ma'lumotlar -->
                 <div class="form-section">
                     <h4 class="section-title">Asosiy ma'lumotlar</h4>
                     <div class="form-group">
-                        <label>Nomi *</label>
-                        <input
-                            v-model="name"
-                            type="text"
-                            :class="{ 'input-invalid': fieldErrors.name }"
-                            placeholder="Masalan: 51 ta qizil atirgul"
-                        />
-                        <p v-if="fieldErrors.name" class="field-error">
-                            {{ fieldErrors.name }}
+                        <label>Kategoriya *</label>
+                        <select
+                            v-model="categoryId"
+                            :class="{ 'input-invalid': fieldErrors.categoryId }"
+                        >
+                            <option value="" disabled>Tanlang</option>
+                            <option
+                                v-for="cat in categoriesStore.items"
+                                :key="cat.id"
+                                :value="cat.id"
+                            >
+                                {{ cat.name }}
+                            </option>
+                        </select>
+                        <p v-if="fieldErrors.categoryId" class="field-error">
+                            {{ fieldErrors.categoryId }}
                         </p>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Kategoriya *</label>
-                            <select
-                                v-model="categoryId"
-                                :class="{ 'input-invalid': fieldErrors.categoryId }"
-                            >
-                                <option value="" disabled>Tanlang</option>
-                                <option
-                                    v-for="cat in categoriesStore.items"
-                                    :key="cat.id"
-                                    :value="cat.id"
-                                >
-                                    {{ cat.name }}
-                                </option>
-                            </select>
-                            <p v-if="fieldErrors.categoryId" class="field-error">
-                                {{ fieldErrors.categoryId }}
-                            </p>
-                        </div>
-                        <div class="form-group">
-                            <label>Qadoqlash turi *</label>
-                            <select
-                                v-model="packagingType"
-                                :class="{ 'input-invalid': fieldErrors.packagingType }"
-                            >
-                                <option value="" disabled>Tanlang</option>
-                                <option
-                                    v-for="opt in PACKAGING_TYPES"
-                                    :key="opt.value"
-                                    :value="opt.value"
-                                >
-                                    {{ opt.label }}
-                                </option>
-                            </select>
-                            <p v-if="fieldErrors.packagingType" class="field-error">
-                                {{ fieldErrors.packagingType }}
-                            </p>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label>Slug</label>
@@ -334,22 +322,81 @@ async function onSubmit() {
                         />
                     </div>
                     <div class="form-group">
-                        <label>Tavsif</label>
+                        <label>Tavsif (o'zbekcha)</label>
                         <textarea
-                            v-model="description"
-                            rows="3"
+                            v-model="descriptionUz"
+                            rows="2"
                             placeholder="Mahsulot haqida qisqacha"
                         />
+                    </div>
+                    <div class="form-group">
+                        <label>Tavsif (inglizcha)</label>
+                        <textarea
+                            v-model="descriptionEng"
+                            rows="2"
+                            placeholder="Short description"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Tavsif (ruscha)</label>
+                        <textarea
+                            v-model="descriptionRu"
+                            rows="2"
+                            placeholder="Краткое описание"
+                        />
+                    </div>
+                </div>
+
+                <!-- Belgi/badge -->
+                <div class="form-section">
+                    <h4 class="section-title">Belgi (tag)</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Belgi (o'zbekcha)</label>
+                            <input
+                                v-model="tagUz"
+                                type="text"
+                                :disabled="clearTagUz"
+                                placeholder="bestseller"
+                            />
+                            <label v-if="isEdit" class="checkbox-label">
+                                <input v-model="clearTagUz" type="checkbox" />
+                                Olib tashlash
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Belgi (inglizcha)</label>
+                            <input
+                                v-model="tagEng"
+                                type="text"
+                                :disabled="clearTagEng"
+                                placeholder="Bestseller"
+                            />
+                            <label v-if="isEdit" class="checkbox-label">
+                                <input v-model="clearTagEng" type="checkbox" />
+                                Olib tashlash
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Belgi (ruscha)</label>
+                        <input
+                            v-model="tagRu"
+                            type="text"
+                            :disabled="clearTagRu"
+                            placeholder="хит продаж"
+                        />
+                        <label v-if="isEdit" class="checkbox-label">
+                            <input v-model="clearTagRu" type="checkbox" />
+                            Olib tashlash
+                        </label>
                     </div>
                 </div>
 
                 <!-- Narx -->
                 <div class="form-section">
                     <h4 class="section-title">Narx</h4>
-                    <p class="hint-text">
-                        Narx API hujjatiga ko'ra eng kichik pul birligida
-                        kiritiladi.
-                    </p>
+                    <p class="hint-text">Narx so'mda, butun son sifatida kiritiladi.</p>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Narx *</label>
@@ -358,7 +405,7 @@ async function onSubmit() {
                                 type="number"
                                 min="0"
                                 :class="{ 'input-invalid': fieldErrors.amount }"
-                                placeholder="15000000"
+                                placeholder="150000"
                             />
                             <p v-if="fieldErrors.amount" class="field-error">
                                 {{ fieldErrors.amount }}
@@ -395,87 +442,6 @@ async function onSubmit() {
                         <input v-model="clearDiscount" type="checkbox" />
                         Chegirmani olib tashlash
                     </label>
-                </div>
-
-                <!-- Xususiyatlar -->
-                <div class="form-section">
-                    <h4 class="section-title">Buket xususiyatlari</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Rangi</label>
-                            <input
-                                v-model="color"
-                                type="text"
-                                placeholder="Masalan: qizil"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label>Poya soni</label>
-                            <input
-                                v-model.number="stemCount"
-                                type="number"
-                                min="0"
-                                :class="{ 'input-invalid': fieldErrors.stemCount }"
-                                placeholder="51"
-                            />
-                            <p v-if="fieldErrors.stemCount" class="field-error">
-                                {{ fieldErrors.stemCount }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Gul turlari</label>
-                            <input
-                                v-model="flowerTypesText"
-                                type="text"
-                                placeholder="rose, tulip"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label>Saqlanish muddati (kun)</label>
-                            <input
-                                v-model.number="freshnessLifespan"
-                                type="number"
-                                min="1"
-                                max="7"
-                                :class="{ 'input-invalid': fieldErrors.freshnessLifespan }"
-                                placeholder="1–7"
-                            />
-                            <p v-if="fieldErrors.freshnessLifespan" class="field-error">
-                                {{ fieldErrors.freshnessLifespan }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Parvarish ko'rsatmasi</label>
-                        <textarea
-                            v-model="careInstructions"
-                            rows="2"
-                            :disabled="clearCareInstructions"
-                            placeholder="Masalan: Har kuni suvini almashtiring"
-                        />
-                    </div>
-                    <label v-if="isEdit" class="checkbox-label">
-                        <input v-model="clearCareInstructions" type="checkbox" />
-                        Ko'rsatmani olib tashlash
-                    </label>
-                    <div class="form-group">
-                        <label>Munosabatlar (occasions)</label>
-                        <input
-                            v-model="occasionsText"
-                            type="text"
-                            placeholder="tug'ilgan kun, yubiley"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label>Mos qo'shimchalar</label>
-                        <input
-                            v-model="compatibleAddonsText"
-                            type="text"
-                            placeholder="shokolad qutisi, otkritka"
-                        />
-                    </div>
                 </div>
 
                 <!-- Holat -->
@@ -515,30 +481,20 @@ async function onSubmit() {
                             </p>
                         </div>
                     </div>
+                    <div v-if="isEdit" class="form-group">
+                        <label>Sotilganlar soni</label>
+                        <input
+                            v-model.number="soldCount"
+                            type="number"
+                            min="0"
+                            placeholder="34"
+                        />
+                    </div>
                 </div>
 
                 <!-- Media -->
                 <div class="form-section">
                     <h4 class="section-title">Media</h4>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>YouTube video havolasi</label>
-                            <input
-                                v-model="videoUrlYoutube"
-                                type="text"
-                                placeholder="https://www.youtube.com/watch?v=..."
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label>Instagram video havolasi</label>
-                            <input
-                                v-model="videoUrlInstagram"
-                                type="text"
-                                placeholder="https://www.instagram.com/reel/..."
-                            />
-                        </div>
-                    </div>
-
                     <div v-if="!isEdit" class="form-group">
                         <label>Rasmlar (eng ko'pi bilan {{ MAX_IMAGES }} ta)</label>
                         <div v-if="imagePreviews.length" class="image-grid">
@@ -715,6 +671,7 @@ async function onSubmit() {
     color: var(--color-text-soft);
     cursor: pointer;
     margin-bottom: 16px;
+    margin-top: 6px;
 }
 .mb-3 {
     margin-bottom: 12px;

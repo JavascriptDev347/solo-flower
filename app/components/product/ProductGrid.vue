@@ -11,7 +11,7 @@
         </div>
 
         <div v-else-if="products.length === 0" class="product-empty">
-            Mahsulotlar topilmadi
+            {{ t("product.empty") }}
         </div>
 
         <div v-else class="product-grid">
@@ -31,13 +31,17 @@ import { useProductsStore } from "~/stores/catalog/products";
 import { useAuthStore } from "~/stores/identity/auth";
 import { useCartStore } from "~/stores/cart";
 import type { Product } from "~/types/product";
+import type { Lang } from "~/composables/catalog/useProducts";
 
 interface Props {
     title?: string;
 }
-withDefaults(defineProps<Props>(), {
-    title: "Mahsulotlar",
+const props = withDefaults(defineProps<Props>(), {
+    title: undefined,
 });
+
+const { t, locale } = useI18n();
+const title = computed(() => props.title ?? t("product.title"));
 
 const store = useProductsStore();
 const authStore = useAuthStore();
@@ -45,7 +49,11 @@ const cartStore = useCartStore();
 const notify = useNotify();
 const route = useRoute();
 
-await store.fetchAll(); // agar allaqachon yuklangan bo'lsa, qayta so'rov yubormaydi
+await store.fetchAll({ lang: locale.value as Lang }); // agar allaqachon yuklangan bo'lsa, qayta so'rov yubormaydi
+
+watch(locale, (newLocale) => {
+    store.fetchAll({ lang: newLocale as Lang });
+});
 
 const products = computed(() => store.items);
 const pending = computed(() => store.loading);
@@ -55,19 +63,17 @@ async function onAddToCart(product: Product) {
         await authStore.fetchMe();
     }
     if (!authStore.isAuthenticated) {
-        notify.info("Savatga qo'shish uchun avval tizimga kiring");
+        notify.info(t("product.loginToAddToCart"));
         await navigateTo(`/auth/login?redirect=${route.fullPath}`);
         return;
     }
 
     cartStore.add(product);
-    notify.success(`"${product.name}" savatga qo'shildi`);
+    notify.success(t("product.addedToCart", { name: product.name }));
 }
 
 function onToggleWishlist(product: Product) {
-    notify.info(
-        `"${product.name}" — sevimlilar funksiyasi tez orada qo'shiladi`,
-    );
+    notify.info(t("product.wishlistSoon", { name: product.name }));
 }
 </script>
 

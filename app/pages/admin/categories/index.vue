@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCategoriesStore } from "~/stores/catalog/categories";
-import type { Category } from "~/types/category";
+import type { AdminCategory } from "~/types/category";
 
 definePageMeta({
     middleware: "admin",
@@ -15,9 +15,9 @@ const search = ref("");
 const showDeleted = ref(false);
 
 const isModalOpen = ref(false);
-const selectedCategory = ref<Category | null>(null);
+const selectedCategory = ref<AdminCategory | null>(null);
 
-const deleteTarget = ref<Category | null>(null);
+const deleteTarget = ref<AdminCategory | null>(null);
 const isDeleting = ref(false);
 
 let searchTimeout: ReturnType<typeof setTimeout>;
@@ -46,7 +46,7 @@ function openCreate() {
     isModalOpen.value = true;
 }
 
-function openEdit(category: Category) {
+function openEdit(category: AdminCategory) {
     selectedCategory.value = category;
     isModalOpen.value = true;
 }
@@ -127,7 +127,7 @@ onMounted(loadCategories);
                         <td>
                             <img :src="row.image_url" class="thumb" alt="" />
                         </td>
-                        <td class="cell-name">{{ row.name }}</td>
+                        <td class="cell-name">{{ row.name_uz }}</td>
                         <td>
                             <span
                                 class="badge"
@@ -179,7 +179,7 @@ onMounted(loadCategories);
             >
                 <img :src="row.image_url" class="thumb" alt="" />
                 <div class="mobile-card-info">
-                    <p class="cell-name">{{ row.name }}</p>
+                    <p class="cell-name">{{ row.name_uz }}</p>
                     <div class="mobile-card-meta">
                         <span
                             class="badge"
@@ -226,7 +226,7 @@ onMounted(loadCategories);
                 <div class="modal-card modal-sm">
                     <h3 class="modal-title">Kategoriyani o'chirish</h3>
                     <p class="modal-text">
-                        <strong>{{ deleteTarget.name }}</strong> kategoriyasini
+                        <strong>{{ deleteTarget.name_uz }}</strong> kategoriyasini
                         o'chirmoqchimisiz?
                     </p>
                     <div class="modal-footer">

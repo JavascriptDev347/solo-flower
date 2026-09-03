@@ -12,15 +12,6 @@ interface RequestOptions {
   _isRetry?: boolean;
 }
 
-const STATUS_MESSAGES: Record<number, string> = {
-  400: "Kiritilgan ma'lumotlarda xatolik bor",
-  401: "Sessiya tugagan, qaytadan kiring",
-  403: "Bu amal uchun huquqingiz yetarli emas",
-  404: "So'ralgan resurs topilmadi",
-  409: "Bunday ma'lumot allaqachon mavjud",
-  500: "Server xatosi, keyinroq urinib ko'ring",
-};
-
 // Bir vaqtda bir nechta 401 kelsa, refresh so'rovi faqat bitta marta ketishi uchun
 let refreshPromise: Promise<boolean> | null = null;
 
@@ -34,6 +25,16 @@ export function useApi() {
   // await'lardan keyin ham to'g'ri ishlashi uchun (SSR paytida navigateTo
   // Nuxt kontekstini yo'qotib qo'ymasligi kerak — callWithNuxt shu uchun)
   const nuxtApp = useNuxtApp();
+  const { t } = nuxtApp.$i18n;
+
+  const STATUS_MESSAGES: Record<number, string> = {
+    400: t("api.status400"),
+    401: t("api.status401"),
+    403: t("api.status403"),
+    404: t("api.status404"),
+    409: t("api.status409"),
+    500: t("api.status500"),
+  };
 
   async function tryRefreshToken(): Promise<boolean> {
     if (!refreshToken.value) return false;
@@ -90,9 +91,9 @@ export function useApi() {
         console.error("Network/CORS xatosi:", err);
         clearTokens();
         if (!opts.silent) {
-          notify.error("Server bilan bog'lanib bo'lmadi");
+          notify.error(t("api.networkError"));
         }
-        throw new ApiError(0, "Server bilan bog'lanib bo'lmadi");
+        throw new ApiError(0, t("api.networkError"));
       }
 
       const status: number = err.response.status;
@@ -112,25 +113,23 @@ export function useApi() {
           return request<T>(url, { ...opts, _isRetry: true });
         }
         clearTokens();
-        if (!opts.silent) notify.error("Sessiya tugadi, qaytadan kiring");
+        if (!opts.silent) notify.error(t("api.sessionExpired"));
         await callWithNuxt(nuxtApp, () => navigateTo("/auth/login"));
-        throw new ApiError(401, "Sessiya tugadi");
+        throw new ApiError(401, t("api.sessionExpired"));
       }
 
       // 500 kelsa — saqlangan tokenlarni tozalab, foydalanuvchini bosh sahifaga chiqaramiz
       if (status === 500) {
         clearTokens();
         if (!opts.silent) {
-          notify.error(
-            "Server bilan muammo bo'lmoqda, keyinroq urinib ko'ring",
-          );
+          notify.error(t("api.serverIssue"));
         }
         await callWithNuxt(nuxtApp, () => navigateTo("/"));
-        throw new ApiError(500, "Server bilan muammo bo'lmoqda");
+        throw new ApiError(500, t("api.serverIssue"));
       }
 
       const friendly =
-        STATUS_MESSAGES[status] || "Kutilmagan xatolik yuz berdi";
+        STATUS_MESSAGES[status] || t("api.unknownError");
       if (!opts.silent) {
         notify.error(serverError || friendly);
       }

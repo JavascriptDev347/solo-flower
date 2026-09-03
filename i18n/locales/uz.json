@@ -1,0 +1,142 @@
+{
+  "header": {
+    "deliveryLabel": "Yetkazib berish:",
+    "deliveryCity": "Toshkent shahri",
+    "trackOrder": "Buyurtmani kuzatish",
+    "contactUs": "Biz bilan bog'lanish",
+    "searchPlaceholder": "Shukufada gul qidiring...",
+    "openSearchAria": "Qidiruvni ochish",
+    "searchLabel": "Qidirish:",
+    "homeAria": "Shukufa — bosh sahifa",
+    "login": "Kirish",
+    "wishlistAria": "Sevimlilar",
+    "cartAria": "Savat",
+    "menuAria": "Menyu",
+    "closeMenuAria": "Menyuni yopish",
+    "logoutAria": "Chiqish",
+    "profile": "Profil",
+    "myOrders": "Buyurtmalarim",
+    "adminPanel": "Admin panel",
+    "logout": "Chiqish",
+    "allCategories": "Barcha kategoriyalar",
+    "todayDelivery": "Bugun yetkazib berish",
+    "valentinesDay": "Sevgi kuni",
+    "condolenceBouquets": "Ta'ziya guldastalari",
+    "giftBouquets": "Tabrik guldastalari",
+    "whiteFlowers": "Oq gullar",
+    "language": "Til"
+  },
+  "footer": {
+    "phoneLabel": "Telefon:",
+    "hoursLabel": "Ish vaqti:",
+    "rights": "Barcha huquqlar himoyalangan — Shukufa © 2026",
+    "about": {
+      "title": "Biz haqimizda",
+      "links": ["Shukufa haqida", "Savol-javob", "Bog'lanish", "Mijozlar fikri", "Hamkorlik"]
+    },
+    "quick": {
+      "title": "Tezkor havolalar",
+      "links": ["Eng ko'p sotilganlar", "Tabrik gullari", "Ta'ziya gullari", "Chegirmalar", "Blog"]
+    },
+    "categories": {
+      "title": "Kategoriyalar",
+      "links": ["Buketlar", "Guldon gullar", "Quyoshgullar", "Atirgullar", "Orxideyalar"]
+    },
+    "help": {
+      "title": "Yordam",
+      "links": ["Yetkazib berish", "To'lov usullari", "Qaytarish", "Maxfiylik siyosati", "Foydalanish shartlari"]
+    }
+  },
+  "hero": {
+    "bannerAria": "Bosh banner",
+    "slideAria": "{n}-slayd"
+  },
+  "home": {
+    "title": "Har lahza uchun eng go'zal gullar",
+    "subtitle": "Sevganlaringiz uchun yangi va sifatli gullarni bugun buyurtma qiling."
+  },
+  "mobileTabBar": {
+    "navAria": "Mobil navigatsiya",
+    "home": "Bosh sahifa",
+    "cart": "Savat",
+    "wishlist": "Sevimlilar",
+    "profile": "Profil"
+  },
+  "category": {
+    "title": "Kategoriyalar",
+    "empty": "Kategoriyalar topilmadi"
+  },
+  "product": {
+    "title": "Mahsulotlar",
+    "empty": "Mahsulotlar topilmadi",
+    "unavailable": "Tugagan",
+    "discount": "Chegirma",
+    "addToCart": "Savatga",
+    "loginToAddToCart": "Savatga qo'shish uchun avval tizimga kiring",
+    "addedToCart": "\"{name}\" savatga qo'shildi",
+    "wishlistSoon": "\"{name}\" — sevimlilar funksiyasi tez orada qo'shiladi",
+    "backToCatalog": "Katalogga qaytish",
+    "notFoundTitle": "Mahsulot topilmadi",
+    "notFoundSubtitle": "Havola noto'g'ri yoki mahsulot o'chirilgan bo'lishi mumkin",
+    "soldCount": "· {count} marta sotilgan",
+    "available": "Sotuvda mavjud",
+    "unavailableLong": "Vaqtincha tugagan",
+    "inStock": "{count} ta omborda",
+    "order": "Buyurtma berish",
+    "description": "Tavsif",
+    "reviews": "Sharhlar ({count})",
+    "reviewsSoon": "Sharh qoldirish funksiyasi tez orada qo'shiladi.",
+    "pageTitleSuffix": "Katalog",
+    "pageTitleFallback": "Mahsulot"
+  },
+  "catalog": {
+    "categoryLabel": "Kategoriya",
+    "empty": "Mahsulotlar hozircha yo'q",
+    "emptySubtitle": "\"{category}\" bo'yicha mahsulotlar tez orada qo'shiladi",
+    "pageTitleFallback": "Katalog"
+  },
+  "auth": {
+    "login": {
+      "title": "Tizimga kirish",
+      "subtitle": "Hisobingizga kiring",
+      "email": "Email",
+      "password": "Parol",
+      "passwordPlaceholder": "Parolingiz",
+      "submitting": "Kirilmoqda...",
+      "submit": "Kirish",
+      "noAccount": "Hisobingiz yo'qmi?",
+      "register": "Ro'yxatdan o'tish"
+    },
+    "register": {
+      "title": "Ro'yxatdan o'tish",
+      "subtitle": "Yangi hisob yarating va xarid qilishni boshlang",
+      "email": "Email",
+      "password": "Parol",
+      "passwordPlaceholder": "Kamida 6 ta belgi",
+      "emailInvalid": "Email formati noto'g'ri",
+      "passwordTooShort": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+      "submitting": "Yuborilmoqda...",
+      "submit": "Ro'yxatdan o'tish",
+      "success": "Muvaffaqiyatli ro'yxatdan o'tdingiz, endi tizimga kiring",
+      "haveAccount": "Hisobingiz bormi?",
+      "login": "Kirish"
+    }
+  },
+  "notify": {
+    "success": "Muvaffaqiyatli",
+    "error": "Xatolik",
+    "info": "Ma'lumot"
+  },
+  "api": {
+    "status400": "Kiritilgan ma'lumotlarda xatolik bor",
+    "status401": "Sessiya tugagan, qaytadan kiring",
+    "status403": "Bu amal uchun huquqingiz yetarli emas",
+    "status404": "So'ralgan resurs topilmadi",
+    "status409": "Bunday ma'lumot allaqachon mavjud",
+    "status500": "Server xatosi, keyinroq urinib ko'ring",
+    "unknownError": "Kutilmagan xatolik yuz berdi",
+    "networkError": "Server bilan bog'lanib bo'lmadi",
+    "sessionExpired": "Sessiya tugadi, qaytadan kiring",
+    "serverIssue": "Server bilan muammo bo'lmoqda, keyinroq urinib ko'ring"
+  }
+}

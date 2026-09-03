@@ -2,7 +2,7 @@
     <div class="product-page">
         <NuxtLink :to="backLink" class="back-link">
             <UIcon name="i-lucide-arrow-left" class="size-4" />
-            Katalogga qaytish
+            {{ t("product.backToCatalog") }}
         </NuxtLink>
 
         <!-- Yuklanmoqda -->
@@ -20,18 +20,18 @@
         <!-- Topilmadi -->
         <div v-else-if="notFound" class="not-found">
             <UIcon name="i-lucide-search-x" class="size-10 not-found-icon" />
-            <p class="not-found-title">Mahsulot topilmadi</p>
+            <p class="not-found-title">{{ t("product.notFoundTitle") }}</p>
             <p class="not-found-subtitle">
-                Havola noto'g'ri yoki mahsulot o'chirilgan bo'lishi mumkin
+                {{ t("product.notFoundSubtitle") }}
             </p>
             <NuxtLink :to="backLink" class="back-link">
-                Katalogga qaytish
+                {{ t("product.backToCatalog") }}
             </NuxtLink>
         </div>
         <!-- Mahsulot -->
         <template v-else-if="product">
             <div class="product-layout">
-                <!-- Chap: galereya + video -->
+                <!-- Chap: galereya -->
                 <div class="gallery">
                     <div class="gallery-main">
                         <img
@@ -46,7 +46,7 @@
                             v-if="!product.is_available"
                             class="unavailable-badge"
                         >
-                            Tugagan
+                            {{ t("product.unavailable") }}
                         </span>
                     </div>
 
@@ -82,16 +82,9 @@
 
                     <div class="title-row">
                         <h1 class="product-title">{{ product.name }}</h1>
-                        <a
-                            v-if="product.video_url_instagram"
-                            :href="product.video_url_instagram"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="instagram-btn"
-                            title="Instagramda ko'rish"
-                        >
-                            <UIcon name="i-lucide-instagram" class="size-5" />
-                        </a>
+                        <span v-if="product.tag" class="tag-chip">{{
+                            product.tag
+                        }}</span>
                     </div>
 
                     <div v-if="product.rating" class="rating-row">
@@ -100,9 +93,9 @@
                             class="size-4 star-filled"
                         />
                         <span>{{ product.rating.toFixed(1) }}</span>
-                        <span class="sold-count"
-                            >· {{ product.sold_count }} marta sotilgan</span
-                        >
+                        <span class="sold-count">{{
+                            t("product.soldCount", { count: product.sold_count })
+                        }}</span>
                     </div>
 
                     <div class="price-row">
@@ -141,159 +134,36 @@
                         >
                             {{
                                 product.is_available
-                                    ? "Sotuvda mavjud"
-                                    : "Vaqtincha tugagan"
+                                    ? t("product.available")
+                                    : t("product.unavailableLong")
                             }}
                         </span>
                         <span v-if="product.stock" class="stock-text">
-                            {{ product.stock }} ta omborda
+                            {{ t("product.inStock", { count: product.stock }) }}
                         </span>
                     </div>
 
                     <UButton
-                        label="Buyurtma berish"
+                        :label="t('product.order')"
                         trailing-icon="i-lucide-shopping-cart"
                         size="lg"
                         :disabled="!product.is_available"
                         class="order-btn bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-full"
                     />
 
-                    <dl v-if="specs.length" class="spec-list">
-                        <div
-                            v-for="spec in specs"
-                            :key="spec.label"
-                            class="spec-row"
-                        >
-                            <dt>{{ spec.label }}</dt>
-                            <dd>{{ spec.value }}</dd>
-                        </div>
-                    </dl>
-
-                    <p v-if="product.care_instructions" class="care-note">
-                        <UIcon name="i-lucide-droplets" class="size-4" />
-                        {{ product.care_instructions }}
-                    </p>
-
-                    <div v-if="product.flower_types.length" class="tag-group">
-                        <span class="tag-group-label">Gullar</span>
-                        <div class="tag-list">
-                            <span
-                                v-for="t in product.flower_types"
-                                :key="t"
-                                class="tag"
-                            >
-                                {{ t }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div v-if="product.occasions.length" class="tag-group">
-                        <span class="tag-group-label">Munosabat bilan</span>
-                        <div class="tag-list">
-                            <span
-                                v-for="t in product.occasions"
-                                :key="t"
-                                class="tag"
-                            >
-                                {{ t }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="product.compatible_addons.length"
-                        class="tag-group"
-                    >
-                        <span class="tag-group-label">Mos qo'shimchalar</span>
-                        <div class="tag-list">
-                            <span
-                                v-for="t in product.compatible_addons"
-                                :key="t"
-                                class="tag tag-addon"
-                            >
-                                {{ t }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video -->
-            <div v-if="youtubeVideoId" class="video-section">
-                <div class="video-section-header">
-                    <h2 class="section-heading">Video</h2>
-                    <a
-                        v-if="product.video_url_youtube"
-                        :href="product.video_url_youtube"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="youtube-link"
-                    >
-                        <UIcon name="i-lucide-youtube" class="size-4" />
-                        YouTube'da ochish
-                    </a>
-                </div>
-                <div class="youtube-embed">
-                    <div ref="youtubePlayerEl" class="youtube-player-mount" />
-                </div>
-
-                <!-- YouTube'ning o'z pleer tugmalari ba'zan (ayniqsa Shorts
-                     embed'ida) ko'rinmasligi mumkin — shu sabab o'zimizning
-                     tugmalarimizni IFrame API orqali qo'shamiz -->
-                <div class="youtube-controls">
-                    <button
-                        type="button"
-                        class="yt-control-btn"
-                        :aria-label="isYoutubePlaying ? 'Pauza' : 'Play'"
-                        @click="toggleYoutubePlay"
-                    >
-                        <UIcon
-                            :name="
-                                isYoutubePlaying
-                                    ? 'i-lucide-pause'
-                                    : 'i-lucide-play'
-                            "
-                            class="size-5"
-                        />
-                    </button>
-                    <button
-                        type="button"
-                        class="yt-control-btn"
-                        :aria-label="
-                            isYoutubeMuted ? 'Ovozni yoqish' : 'Ovozni ochirish'
-                        "
-                        @click="toggleYoutubeMute"
-                    >
-                        <UIcon
-                            :name="
-                                isYoutubeMuted
-                                    ? 'i-lucide-volume-x'
-                                    : 'i-lucide-volume-2'
-                            "
-                            class="size-5"
-                        />
-                    </button>
-                    <button
-                        type="button"
-                        class="yt-control-btn"
-                        aria-label="To'liq ekran"
-                        @click="requestYoutubeFullscreen"
-                    >
-                        <UIcon name="i-lucide-maximize" class="size-5" />
-                    </button>
                 </div>
             </div>
 
             <!-- Tavsif -->
             <div v-if="product.description" class="description-section">
-                <h2 class="section-heading">Tavsif</h2>
+                <h2 class="section-heading">{{ t("product.description") }}</h2>
                 <p class="description-text">{{ product.description }}</p>
             </div>
 
             <!-- Sharhlar -->
             <div class="comments-section">
                 <h2 class="section-heading">
-                    Sharhlar ({{ fakeComments.length }})
+                    {{ t("product.reviews", { count: fakeComments.length }) }}
                 </h2>
                 <div class="comments-list">
                     <div
@@ -325,7 +195,7 @@
                     </div>
                 </div>
                 <p class="comments-note">
-                    Sharh qoldirish funksiyasi tez orada qo'shiladi.
+                    {{ t("product.reviewsSoon") }}
                 </p>
             </div>
         </template>
@@ -336,10 +206,11 @@
 
 <script setup lang="ts">
 import { useProducts } from "~/composables/catalog/useProducts";
+import type { Lang } from "~/composables/catalog/useProducts";
 import { useCategoriesStore } from "~/stores/catalog/categories";
-import { PACKAGING_TYPES } from "~/types/product";
 import type { Product } from "~/types/product";
 
+const { t, locale } = useI18n();
 const route = useRoute();
 const { getBySlug } = useProducts();
 const categoriesStore = useCategoriesStore();
@@ -354,8 +225,11 @@ async function loadProduct() {
     notFound.value = false;
     activeImageIndex.value = 0;
     try {
-        product.value = await getBySlug(route.params.slug as string);
-        categoriesStore.fetchAll();
+        product.value = await getBySlug(
+            route.params.slug as string,
+            locale.value as Lang,
+        );
+        categoriesStore.fetchAll(false, locale.value as Lang);
     } catch {
         notFound.value = true;
         product.value = null;
@@ -365,7 +239,7 @@ async function loadProduct() {
 }
 
 onMounted(loadProduct);
-watch(() => route.params.slug, loadProduct);
+watch([() => route.params.slug, locale], loadProduct);
 
 const activeImage = computed(
     () => product.value?.images[activeImageIndex.value],
@@ -392,141 +266,6 @@ const discountPercent = computed(() => {
         product.value.final_price_amount ?? product.value.price_amount;
     return Math.round((1 - finalAmount / product.value.price_amount) * 100);
 });
-
-const packagingLabel = computed(
-    () =>
-        PACKAGING_TYPES.find((p) => p.value === product.value?.packaging_type)
-            ?.label,
-);
-
-const specs = computed(() => {
-    if (!product.value) return [];
-    const list: { label: string; value: string }[] = [];
-    if (product.value.color)
-        list.push({ label: "Rangi", value: product.value.color });
-    if (product.value.stem_count) {
-        list.push({
-            label: "Poya soni",
-            value: `${product.value.stem_count} ta`,
-        });
-    }
-    if (packagingLabel.value) {
-        list.push({ label: "Qadoqlash", value: packagingLabel.value });
-    }
-    if (product.value.freshness_lifespan) {
-        list.push({
-            label: "Saqlanish muddati",
-            value: `${product.value.freshness_lifespan} kun`,
-        });
-    }
-    return list;
-});
-
-// YouTube havolasidan (watch/shorts/youtu.be — qaysi shaklda bo'lishidan
-// qat'iy nazar) video ID'sini ajratib oladi
-const youtubeVideoId = computed(() => {
-    const url = product.value?.video_url_youtube;
-    if (!url) return "";
-    try {
-        const parsed = new URL(url);
-
-        if (parsed.hostname.includes("youtu.be")) {
-            return parsed.pathname.slice(1);
-        }
-        if (parsed.pathname.startsWith("/embed/")) {
-            return parsed.pathname.split("/embed/")[1] ?? "";
-        }
-        if (parsed.pathname.startsWith("/shorts/")) {
-            return parsed.pathname.split("/shorts/")[1] ?? "";
-        }
-        return parsed.searchParams.get("v") ?? "";
-    } catch {
-        return "";
-    }
-});
-
-// YouTube Shorts embed'ida native pleer tugmalari ko'rinmasligi mumkin,
-// shuning uchun rasmiy IFrame Player API orqali o'z tugmalarimizni
-// (play/pauza/ovoz/to'liq ekran) qo'shamiz
-const youtubePlayerEl = ref<HTMLDivElement>();
-const ytPlayer = ref<any>(null);
-const isYoutubePlaying = ref(false);
-const isYoutubeMuted = ref(false);
-
-function loadYoutubeApi(): Promise<void> {
-    return new Promise((resolve) => {
-        const w = window as any;
-        if (w.YT?.Player) {
-            resolve();
-            return;
-        }
-        const previous = w.onYouTubeIframeAPIReady;
-        w.onYouTubeIframeAPIReady = () => {
-            previous?.();
-            resolve();
-        };
-        if (!document.getElementById("youtube-iframe-api-script")) {
-            const tag = document.createElement("script");
-            tag.id = "youtube-iframe-api-script";
-            tag.src = "https://www.youtube.com/iframe_api";
-            document.head.appendChild(tag);
-        }
-    });
-}
-
-function destroyYoutubePlayer() {
-    ytPlayer.value?.destroy?.();
-    ytPlayer.value = null;
-    isYoutubePlaying.value = false;
-    isYoutubeMuted.value = false;
-}
-
-async function initYoutubePlayer() {
-    destroyYoutubePlayer();
-    if (!youtubeVideoId.value) return;
-
-    await loadYoutubeApi();
-    await nextTick();
-    if (!youtubePlayerEl.value) return;
-
-    const w = window as any;
-    ytPlayer.value = new w.YT.Player(youtubePlayerEl.value, {
-        videoId: youtubeVideoId.value,
-        playerVars: { rel: 0, playsinline: 1 },
-        events: {
-            onStateChange: (e: any) => {
-                isYoutubePlaying.value = e.data === w.YT.PlayerState.PLAYING;
-            },
-        },
-    });
-}
-
-function toggleYoutubePlay() {
-    if (!ytPlayer.value) return;
-    if (isYoutubePlaying.value) {
-        ytPlayer.value.pauseVideo();
-    } else {
-        ytPlayer.value.playVideo();
-    }
-}
-
-function toggleYoutubeMute() {
-    if (!ytPlayer.value) return;
-    if (isYoutubeMuted.value) {
-        ytPlayer.value.unMute();
-    } else {
-        ytPlayer.value.mute();
-    }
-    isYoutubeMuted.value = !isYoutubeMuted.value;
-}
-
-function requestYoutubeFullscreen() {
-    const iframe = youtubePlayerEl.value?.querySelector("iframe");
-    iframe?.requestFullscreen?.();
-}
-
-watch(youtubeVideoId, initYoutubePlayer);
-onUnmounted(destroyYoutubePlayer);
 
 function formatPrice(amount: number | null | undefined, currency: string) {
     return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
@@ -561,7 +300,9 @@ const fakeComments = [
 ];
 
 useHead(() => ({
-    title: product.value ? `${product.value.name} — Katalog` : "Mahsulot",
+    title: product.value
+        ? `${product.value.name} — ${t("product.pageTitleSuffix")}`
+        : t("product.pageTitleFallback"),
 }));
 </script>
 
@@ -678,24 +419,15 @@ useHead(() => ({
     gap: 12px;
 }
 
-.instagram-btn {
+.tag-chip {
     flex-shrink: 0;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f4f4f5;
-    color: #1a1a1a;
-    text-decoration: none;
-    transition:
-        background 0.15s,
-        color 0.15s;
-}
-.instagram-btn:hover {
-    background: var(--color-primary-soft, #fdf0f4);
-    color: var(--color-primary, #e0568c);
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--color-primary, #e0568c);
+    text-transform: capitalize;
+    padding: 4px 12px;
+    border-radius: 999px;
 }
 
 .category-chip {
@@ -792,144 +524,6 @@ useHead(() => ({
     width: 100%;
     justify-content: center;
     margin-bottom: 24px;
-}
-
-.spec-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 16px 0;
-    border-top: 1px solid #e4e4e7;
-    margin: 0 0 12px;
-}
-.spec-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-}
-.spec-row dt {
-    color: #9a9aa2;
-}
-.spec-row dd {
-    margin: 0;
-    color: #1a1a1a;
-    font-weight: 500;
-}
-
-.care-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 13px;
-    color: #6b6b73;
-    background: #f4f4f5;
-    border-radius: 12px;
-    padding: 12px 14px;
-    margin: 0 0 16px;
-}
-
-.tag-group {
-    margin-bottom: 14px;
-}
-.tag-group-label {
-    display: block;
-    font-size: 12px;
-    color: #9a9aa2;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-}
-.tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.tag {
-    font-size: 13px;
-    color: #1a1a1a;
-    background: #f4f4f5;
-    border-radius: 999px;
-    padding: 4px 12px;
-}
-.tag-addon {
-    background: var(--color-primary-soft, #fdf0f4);
-    color: var(--color-primary, #e0568c);
-}
-
-/* Video */
-.video-section {
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid #e4e4e7;
-}
-.video-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.video-section-header .section-heading {
-    margin: 0;
-}
-.youtube-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #6b6b73;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-.youtube-link:hover {
-    color: #ff0000;
-}
-.youtube-embed {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #000;
-    max-width: 720px;
-    aspect-ratio: 16 / 9;
-}
-.youtube-player-mount {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-}
-.youtube-player-mount :deep(iframe) {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-.youtube-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-}
-.yt-control-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid #e4e4e7;
-    background: #fff;
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition:
-        background 0.15s,
-        color 0.15s;
-}
-.yt-control-btn:hover {
-    background: var(--color-primary-soft, #fdf0f4);
-    color: var(--color-primary, #e0568c);
 }
 
 /* Tavsif */

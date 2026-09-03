@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useEventsStore } from "~/stores/catalog/events";
 import { useCategoriesStore } from "~/stores/catalog/categories";
-import type { Event } from "~/types/event";
+import type { AdminEvent } from "~/types/event";
 
 definePageMeta({
     middleware: "admin",
@@ -16,9 +16,9 @@ const isLoading = computed(() => store.adminLoading);
 const showDeleted = ref(false);
 
 const isModalOpen = ref(false);
-const selectedEvent = ref<Event | null>(null);
+const selectedEvent = ref<AdminEvent | null>(null);
 
-const deleteTarget = ref<Event | null>(null);
+const deleteTarget = ref<AdminEvent | null>(null);
 const isDeleting = ref(false);
 
 async function loadEvents() {
@@ -44,7 +44,7 @@ function openCreate() {
     isModalOpen.value = true;
 }
 
-function openEdit(event: Event) {
+function openEdit(event: AdminEvent) {
     selectedEvent.value = event;
     isModalOpen.value = true;
 }
@@ -127,8 +127,8 @@ onMounted(() => {
                             <img :src="row.image" class="thumb" alt="" />
                         </td>
                         <td class="cell-name">
-                            {{ row.title }}
-                            <div class="cell-muted">{{ row.eyebrow }}</div>
+                            {{ row.title_uz }}
+                            <div class="cell-muted">{{ row.eyebrow_uz }}</div>
                         </td>
                         <td class="cell-muted">
                             {{ categoryName(row.category_id) }}
@@ -198,7 +198,7 @@ onMounted(() => {
             >
                 <img :src="row.image" class="thumb" alt="" />
                 <div class="mobile-card-info">
-                    <p class="cell-name">{{ row.title }}</p>
+                    <p class="cell-name">{{ row.title_uz }}</p>
                     <div class="mobile-card-meta">
                         <span
                             class="badge"
@@ -252,7 +252,7 @@ onMounted(() => {
                 <div class="modal-card modal-sm">
                     <h3 class="modal-title">Eventni o'chirish</h3>
                     <p class="modal-text">
-                        <strong>{{ deleteTarget.title }}</strong> eventini
+                        <strong>{{ deleteTarget.title_uz }}</strong> eventini
                         o'chirmoqchimisiz?
                     </p>
                     <div class="modal-footer">

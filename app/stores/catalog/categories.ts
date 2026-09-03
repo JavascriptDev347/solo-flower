@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
-import { useCategories } from "~/composables/catalog/useCategories";
-import type { Category } from "~/types/category";
+import { useCategories, type Lang } from "~/composables/catalog/useCategories";
+import type { Category, AdminCategory } from "~/types/category";
 
 export const useCategoriesStore = defineStore("categories", {
   state: () => ({
     // Public katalog uchun (faqat faol kategoriyalar, keshlanadi)
     items: [] as Category[],
+    itemsLang: null as Lang | null,
     loaded: false,
     loading: false,
     // Admin ro'yxati uchun (qidiruv/o'chirilganlar bilan, har doim yangilanadi)
-    adminItems: [] as Category[],
+    adminItems: [] as AdminCategory[],
     adminLoading: false,
   }),
 
@@ -21,14 +22,18 @@ export const useCategoriesStore = defineStore("categories", {
   },
 
   actions: {
-    async fetchAll(force = false) {
-      // allaqachon yuklangan bo'lsa va force qilinmasa — qayta so'rov yubormaydi
-      if (this.loaded && !force) return this.items;
+    async fetchAll(force = false, lang?: Lang) {
+      const langChanged =
+        lang != null && this.itemsLang != null && this.itemsLang !== lang;
+      // allaqachon yuklangan bo'lsa, til o'zgarmagan bo'lsa va force
+      // qilinmasa — qayta so'rov yubormaydi
+      if (this.loaded && !force && !langChanged) return this.items;
 
       const { list } = useCategories();
       this.loading = true;
       try {
-        this.items = (await list()) ?? [];
+        this.items = (await list("", lang)) ?? [];
+        this.itemsLang = lang ?? this.itemsLang;
         this.loaded = true;
         return this.items;
       } finally {
@@ -47,7 +52,12 @@ export const useCategoriesStore = defineStore("categories", {
       }
     },
 
-    async create(payload: { name: string; image: File }) {
+    async create(payload: {
+      name_uz: string;
+      name_eng: string;
+      name_ru: string;
+      image: File;
+    }) {
       const { create } = useCategories();
       const result = await create(payload);
       // API faqat { id } qaytaradi — to'liq kategoriya emas, shuning uchun
@@ -56,7 +66,10 @@ export const useCategoriesStore = defineStore("categories", {
       return result;
     },
 
-    async update(id: string, payload: { name?: string; image?: File }) {
+    async update(
+      id: string,
+      payload: { name_uz?: string; name_eng?: string; name_ru?: string },
+    ) {
       const { update } = useCategories();
       const result = await update(id, payload);
       // API hech narsa qaytarmaydi (null), shuning uchun keshlarni bekor qilamiz

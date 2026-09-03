@@ -5,19 +5,21 @@ import {
   type UpdateProductPayload,
   type ProductListParams,
   type AdminProductListParams,
+  type Lang,
 } from "~/composables/catalog/useProducts";
-import type { Product } from "~/types/product";
+import type { Product, AdminProduct } from "~/types/product";
 import type { Pagination } from "~/types/api";
 
 export const useProductsStore = defineStore("products", {
   state: () => ({
     // Public katalog uchun (faqat faol mahsulotlar, filtrsiz so'rov keshlanadi)
     items: [] as Product[],
+    itemsLang: null as Lang | null,
     pagination: null as Pagination | null,
     loaded: false,
     loading: false,
     // Admin ro'yxati uchun (o'chirilganlar bilan, har doim yangilanadi)
-    adminItems: [] as Product[],
+    adminItems: [] as AdminProduct[],
     adminPagination: null as Pagination | null,
     adminLoading: false,
     // Katalog sahifasi uchun (filtrlangan, homepage keshiga tegmaydi)
@@ -29,8 +31,13 @@ export const useProductsStore = defineStore("products", {
   actions: {
     async fetchAll(params?: ProductListParams, force = false) {
       const hasFilter = !!(params?.search || params?.category_id);
-      // Filtrsiz so'rov allaqachon yuklangan bo'lsa va force qilinmasa — qayta so'rov yubormaydi
-      if (!hasFilter && this.loaded && !force) return this.items;
+      const langChanged =
+        params?.lang != null &&
+        this.itemsLang != null &&
+        this.itemsLang !== params.lang;
+      // Filtrsiz so'rov allaqachon yuklangan bo'lsa, til o'zgarmagan bo'lsa
+      // va force qilinmasa — qayta so'rov yubormaydi
+      if (!hasFilter && this.loaded && !force && !langChanged) return this.items;
 
       const { list } = useProducts();
       this.loading = true;
@@ -38,6 +45,7 @@ export const useProductsStore = defineStore("products", {
         const result = await list(params);
         this.items = result?.items ?? [];
         this.pagination = result?.pagination ?? null;
+        this.itemsLang = params?.lang ?? this.itemsLang;
         if (!hasFilter) this.loaded = true;
         return this.items;
       } finally {

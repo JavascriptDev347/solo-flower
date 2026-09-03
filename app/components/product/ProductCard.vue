@@ -17,7 +17,10 @@
                 v-if="!product.is_available"
                 class="status-badge status-unavailable"
             >
-                Tugagan
+                {{ t("product.unavailable") }}
+            </span>
+            <span v-else-if="product.tag" class="status-badge status-tag">
+                {{ product.tag }}
             </span>
         </div>
 
@@ -87,7 +90,7 @@
             <!-- Pastki Savatga tugmasi -->
             <div class="cart-action">
                 <UButton
-                    label="Savatga"
+                    :label="t('product.addToCart')"
                     trailing-icon="i-lucide-shopping-cart"
                     size="md"
                     block
@@ -102,6 +105,8 @@
 
 <script setup lang="ts">
 import type { Product } from "~/types/product";
+
+const { t } = useI18n();
 
 const props = defineProps<{
     product: Product;
@@ -185,6 +190,15 @@ function formatPrice(amount: number | null | undefined, currency: string) {
     left: 10px;
     background: #71717a;
     color: #fff;
+}
+
+.status-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--color-primary, #e0568c);
+    color: #fff;
+    text-transform: capitalize;
 }
 
 .status-discount {

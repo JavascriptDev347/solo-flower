@@ -3,29 +3,35 @@ import {
   useEvents,
   type CreateEventPayload,
   type UpdateEventPayload,
+  type Lang,
 } from "~/composables/catalog/useEvents";
-import type { Event } from "~/types/event";
+import type { Event, AdminEvent } from "~/types/event";
 
 export const useEventsStore = defineStore("events", {
   state: () => ({
     // Bosh sahifa banneri uchun (faqat faol eventlar, keshlanadi)
     items: [] as Event[],
+    itemsLang: null as Lang | null,
     loaded: false,
     loading: false,
     // Admin ro'yxati uchun (o'chirilganlar bilan, har doim yangilanadi)
-    adminItems: [] as Event[],
+    adminItems: [] as AdminEvent[],
     adminLoading: false,
   }),
 
   actions: {
-    async fetchAll(force = false) {
-      // allaqachon yuklangan bo'lsa va force qilinmasa — qayta so'rov yubormaydi
-      if (this.loaded && !force) return this.items;
+    async fetchAll(force = false, lang?: Lang) {
+      const langChanged =
+        lang != null && this.itemsLang != null && this.itemsLang !== lang;
+      // allaqachon yuklangan bo'lsa, til o'zgarmagan bo'lsa va force
+      // qilinmasa — qayta so'rov yubormaydi
+      if (this.loaded && !force && !langChanged) return this.items;
 
       const { list } = useEvents();
       this.loading = true;
       try {
-        this.items = (await list()) ?? [];
+        this.items = (await list(lang)) ?? [];
+        this.itemsLang = lang ?? this.itemsLang;
         this.loaded = true;
         return this.items;
       } finally {

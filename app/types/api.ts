@@ -7,7 +7,7 @@ export interface ApiEnvelope<T> {
 export interface Pagination {
   page: number
   page_size: number
-  total: number
+  total_items: number
   total_pages: number
 }
 
