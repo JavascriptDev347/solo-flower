@@ -112,8 +112,8 @@ function goToCategory() {
 }
 
 watch(locale, (newLocale) => {
-    store.fetchAll(false, newLocale as Lang);
-    categoriesStore.fetchAll(false, newLocale as Lang);
+    store.fetchAll(false, newLocale as Lang).catch(() => {});
+    categoriesStore.fetchAll(false, newLocale as Lang).catch(() => {});
 });
 
 let intervalId: ReturnType<typeof setInterval> | undefined;
@@ -124,6 +124,8 @@ onMounted(async () => {
             store.fetchAll(false, locale.value as Lang),
             categoriesStore.fetchAll(false, locale.value as Lang),
         ]);
+    } catch {
+        // xato allaqachon useApi ichida notify qilingan — bannerni buzmaymiz
     } finally {
         loaded.value = true;
     }

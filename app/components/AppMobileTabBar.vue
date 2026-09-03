@@ -9,11 +9,11 @@
             :key="item.label"
             :to="item.to"
             class="flex flex-col items-center gap-1 flex-1 py-1"
-            :class="item.active ? 'text-brand-accent' : 'text-stone-500'"
+            :class="isActive(item.to) ? 'text-brand-accent' : 'text-stone-500'"
         >
             <span
                 class="flex items-center justify-center size-9 rounded-xl transition-colors"
-                :class="item.active ? 'bg-brand-accent text-white' : ''"
+                :class="isActive(item.to) ? 'bg-brand-accent text-white' : ''"
             >
                 <UIcon :name="item.icon" class="size-5" />
             </span>
@@ -24,22 +24,43 @@
 
 <script setup lang="ts">
 const { t } = useI18n();
+const authStore = useAuthStore();
+const route = useRoute();
 
-// Tartib chapdan o'ngga: Bosh sahifa (faol) → Savat → Sevimlilar → Profil
+function isActive(to: string) {
+    if (to === "/") return route.path === "/";
+    return route.path.startsWith(to);
+}
+
+// Tartib chapdan o'ngga: Bosh sahifa → Savat/Sevimlilar (admin bo'lsa —
+// Eventlar/Mahsulotlar admin havolalari) → Profil
 const items = computed(() => [
-    { label: t("mobileTabBar.home"), icon: "i-lucide-home", to: "/", active: true },
-    {
-        label: t("mobileTabBar.cart"),
-        icon: "i-lucide-shopping-cart",
-        to: "#",
-        active: false,
-    },
-    {
-        label: t("mobileTabBar.wishlist"),
-        icon: "i-lucide-heart",
-        to: "#",
-        active: false,
-    },
-    { label: t("mobileTabBar.profile"), icon: "i-lucide-user", to: "#", active: false },
+    { label: t("mobileTabBar.home"), icon: "i-lucide-home", to: "/" },
+    ...(authStore.isAdmin
+        ? [
+              {
+                  label: t("mobileTabBar.events"),
+                  icon: "i-lucide-calendar-days",
+                  to: "/admin/events",
+              },
+              {
+                  label: t("mobileTabBar.products"),
+                  icon: "i-lucide-box",
+                  to: "/admin/products",
+              },
+          ]
+        : [
+              {
+                  label: t("mobileTabBar.cart"),
+                  icon: "i-lucide-shopping-cart",
+                  to: "#",
+              },
+              {
+                  label: t("mobileTabBar.wishlist"),
+                  icon: "i-lucide-heart",
+                  to: "#",
+              },
+          ]),
+    { label: t("mobileTabBar.profile"), icon: "i-lucide-user", to: "#" },
 ]);
 </script>

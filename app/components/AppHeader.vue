@@ -217,6 +217,46 @@
                         />
                     </div>
 
+                    <!-- Hisob havolalari: profil, buyurtmalar, (admin bo'lsa) admin panel -->
+                    <ul
+                        v-if="authStore.isAuthenticated"
+                        class="space-y-1 text-sm font-medium text-stone-700"
+                    >
+                        <li>
+                            <NuxtLink
+                                to="/profile"
+                                class="flex items-center gap-2 px-2 py-2.5"
+                                @click="isMenuOpen = false"
+                            >
+                                <UIcon
+                                    name="i-lucide-user-round"
+                                    class="size-4"
+                                />
+                                {{ t("header.profile") }}
+                            </NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink
+                                to="/orders"
+                                class="flex items-center gap-2 px-2 py-2.5"
+                                @click="isMenuOpen = false"
+                            >
+                                <UIcon name="i-lucide-package" class="size-4" />
+                                {{ t("header.myOrders") }}
+                            </NuxtLink>
+                        </li>
+                        <li v-if="authStore.isAdmin">
+                            <NuxtLink
+                                to="/admin"
+                                class="flex items-center gap-2 px-2 py-2.5 text-brand-accent"
+                                @click="isMenuOpen = false"
+                            >
+                                <UIcon name="i-lucide-shield" class="size-4" />
+                                {{ t("header.adminPanel") }}
+                            </NuxtLink>
+                        </li>
+                    </ul>
+
                     <UButton
                         v-else
                         icon="i-lucide-user"
@@ -249,33 +289,6 @@
                         class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-xl"
                     />
 
-                    <ul class="space-y-1 text-sm font-medium text-stone-700">
-                        <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5">{{
-                                t("header.todayDelivery")
-                            }}</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5">{{
-                                t("header.valentinesDay")
-                            }}</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5">{{
-                                t("header.condolenceBouquets")
-                            }}</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5">{{
-                                t("header.giftBouquets")
-                            }}</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="#" class="block px-2 py-2.5">{{
-                                t("header.whiteFlowers")
-                            }}</NuxtLink>
-                        </li>
-                    </ul>
 
                     <div
                         class="border-t border-stone-100 pt-4 space-y-1 text-sm text-stone-500"

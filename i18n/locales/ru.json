@@ -60,7 +60,9 @@
     "home": "Главная",
     "cart": "Корзина",
     "wishlist": "Избранное",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "events": "События",
+    "products": "Товары"
   },
   "category": {
     "title": "Категории",

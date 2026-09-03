@@ -15,41 +15,69 @@
             {{ t("category.empty") }}
         </div>
 
-        <!-- Swiper Slider + Animatsiya -->
+        <!-- Swiper Slider + Animatsiya (faqat mijoz tomonda — swiper SSR'da
+             haqiqiy DOM'ga muhtoj, shuning uchun ClientOnly bilan o'raladi) -->
         <div v-else class="slider-container">
-            <swiper
-                :modules="[SwiperAutoplay, SwiperFreeMode]"
-                :slides-per-view="'auto'"
-                :space-between="16"
-                :free-mode="true"
-                :grab-cursor="true"
-                class="category-swiper"
-            >
-                <swiper-slide
-                    v-for="(cat, index) in categories"
-                    :key="cat.id"
-                    class="category-slide"
+            <ClientOnly>
+                <swiper
+                    :modules="[SwiperAutoplay, SwiperFreeMode]"
+                    :slides-per-view="1.8"
+                    :space-between="14"
+                    :free-mode="{ enabled: true, sticky: true }"
+                    :grab-cursor="true"
+                    :loop="categories.length > 5"
+                    :autoplay="{
+                        delay: 2600,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: true,
+                    }"
+                    :breakpoints="{
+                        480: { slidesPerView: 2.4, spaceBetween: 14 },
+                        640: { slidesPerView: 3.2, spaceBetween: 16 },
+                        900: { slidesPerView: 4.2, spaceBetween: 18 },
+                        1200: { slidesPerView: 5.5, spaceBetween: 20 },
+                    }"
+                    class="category-swiper"
                 >
-                    <NuxtLink
-                        :to="{
-                            path: '/catalog',
-                            query: { category: cat.name },
-                        }"
-                        class="category-card animate-card"
-                        :style="{ animationDelay: `${(index % 6) * 100}ms` }"
+                    <swiper-slide
+                        v-for="(cat, index) in categories"
+                        :key="cat.id"
+                        class="category-slide"
                     >
-                        <p class="category-name">{{ cat.name }}</p>
-                        <div class="image-wrapper">
-                            <img
-                                :src="cat.image_url"
-                                :alt="cat.name"
-                                loading="lazy"
-                                @error="onImageError"
-                            />
+                        <NuxtLink
+                            :to="{
+                                path: '/catalog',
+                                query: { category: cat.name },
+                            }"
+                            class="category-card animate-card"
+                            :style="{ animationDelay: `${(index % 6) * 100}ms` }"
+                        >
+                            <p class="category-name">{{ cat.name }}</p>
+                            <div class="image-wrapper">
+                                <img
+                                    :src="cat.image_url"
+                                    :alt="cat.name"
+                                    loading="lazy"
+                                    @error="onImageError"
+                                />
+                            </div>
+                        </NuxtLink>
+                    </swiper-slide>
+                </swiper>
+
+                <template #fallback>
+                    <div class="skeleton-track">
+                        <div
+                            v-for="n in 5"
+                            :key="n"
+                            class="category-card skeleton-card"
+                        >
+                            <div class="skeleton-text" />
+                            <div class="skeleton-circle" />
                         </div>
-                    </NuxtLink>
-                </swiper-slide>
-            </swiper>
+                    </div>
+                </template>
+            </ClientOnly>
         </div>
     </section>
 </template>
@@ -78,10 +106,14 @@ const title = computed(() => props.title ?? t("category.title"));
 
 const store = useCategoriesStore();
 
-await store.fetchAll(false, locale.value as Lang);
+try {
+    await store.fetchAll(false, locale.value as Lang);
+} catch {
+    // xato allaqachon useApi ichida notify qilingan — sahifani buzmaymiz
+}
 
 watch(locale, (newLocale) => {
-    store.fetchAll(false, newLocale as Lang);
+    store.fetchAll(false, newLocale as Lang).catch(() => {});
 });
 
 const categories = computed(() => store.items);
@@ -110,6 +142,12 @@ function onImageError(e: Event) {
     padding: 24px 16px;
 }
 
+@media (max-width: 480px) {
+    .category-slider-wrapper {
+        padding: 16px 12px;
+    }
+}
+
 .category-title {
     font-size: 20px;
     font-weight: 700;
@@ -118,13 +156,12 @@ function onImageError(e: Event) {
 }
 
 .category-swiper {
-    overflow: visible;
+    overflow: hidden;
     padding-bottom: 8px;
 }
 
 .category-slide {
-    width: 220px;
-    flex-shrink: 0;
+    height: auto;
 }
 
 /* Karta konteyneri */
@@ -150,6 +187,14 @@ function onImageError(e: Event) {
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
 }
 
+@media (max-width: 480px) {
+    .category-card {
+        height: 120px;
+        padding: 14px;
+        border-radius: 20px;
+    }
+}
+
 /* Sarlavha */
 .category-name {
     position: relative;
@@ -162,6 +207,13 @@ function onImageError(e: Event) {
     max-width: 48%; /* Matn gul bilan to'qnashmasligi uchun */
 }
 
+@media (max-width: 480px) {
+    .category-name {
+        font-size: 13px;
+        max-width: 52%;
+    }
+}
+
 /* Katta rasm konteyneri */
 .image-wrapper {
     position: absolute;
@@ -171,6 +223,13 @@ function onImageError(e: Event) {
     height: 190px; /* Kartaning bo'yidan (150px) balandroq */
     z-index: 1;
     pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .image-wrapper {
+        width: 150px;
+        height: 145px;
+    }
 }
 
 .image-wrapper img {
@@ -200,14 +259,41 @@ function onImageError(e: Event) {
 /* Skeleton Loading */
 .skeleton-track {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     overflow-x: hidden;
 }
 
 .skeleton-card {
-    flex: 0 0 220px;
+    flex: 0 0 calc((100% - 4 * 14px) / 1.8);
+    height: 150px;
     position: relative;
     background: #eaeaea;
+}
+
+@media (min-width: 480px) {
+    .skeleton-card {
+        flex-basis: calc((100% - 4 * 14px) / 2.4);
+    }
+}
+@media (min-width: 640px) {
+    .skeleton-card {
+        flex-basis: calc((100% - 4 * 16px) / 3.2);
+    }
+}
+@media (min-width: 900px) {
+    .skeleton-card {
+        flex-basis: calc((100% - 4 * 18px) / 4.2);
+    }
+}
+@media (min-width: 1200px) {
+    .skeleton-card {
+        flex-basis: calc((100% - 4 * 20px) / 5.5);
+    }
+}
+@media (max-width: 480px) {
+    .skeleton-card {
+        height: 120px;
+    }
 }
 
 .skeleton-text {

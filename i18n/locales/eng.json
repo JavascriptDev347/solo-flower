@@ -60,7 +60,9 @@
     "home": "Home",
     "cart": "Cart",
     "wishlist": "Wishlist",
-    "profile": "Profile"
+    "profile": "Profile",
+    "events": "Events",
+    "products": "Products"
   },
   "category": {
     "title": "Categories",

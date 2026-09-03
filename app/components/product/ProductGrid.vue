@@ -49,10 +49,14 @@ const cartStore = useCartStore();
 const notify = useNotify();
 const route = useRoute();
 
-await store.fetchAll({ lang: locale.value as Lang }); // agar allaqachon yuklangan bo'lsa, qayta so'rov yubormaydi
+try {
+    await store.fetchAll({ lang: locale.value as Lang }); // agar allaqachon yuklangan bo'lsa, qayta so'rov yubormaydi
+} catch {
+    // xato allaqachon useApi ichida notify qilingan — sahifani buzmaymiz
+}
 
 watch(locale, (newLocale) => {
-    store.fetchAll({ lang: newLocale as Lang });
+    store.fetchAll({ lang: newLocale as Lang }).catch(() => {});
 });
 
 const products = computed(() => store.items);
