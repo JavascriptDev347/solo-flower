@@ -1,60 +1,66 @@
 <template>
+    <!-- flower-shop-ui-spec.md 3.1.1 — "isolated subject on a solid
+         brand-color panel": qattiq brend rang paneli (mavjud CTA rangi —
+         brand-maroon) ustida cutout buket rasmi (fon o'chirilgan/shaffof
+         rasm kutiladi), matn to'g'ridan-to'g'ri panel ustida (scrim shart
+         emas, chunki orqa fon endi "band" surat emas) -->
     <section
         v-if="!loaded || slides.length"
-        class="relative rounded-2xl bg-linear-to-br from-brand-cream to-brand-cream-dark overflow-hidden"
+        class="relative w-full overflow-hidden bg-brand-maroon"
         :aria-busy="!loaded"
         :aria-label="t('hero.bannerAria')"
     >
         <div
-            class="max-w-7xl mx-auto px-6 py-10 flex flex-col-reverse md:flex-row items-center gap-8 min-h-85 "
+            class="max-w-7xl mx-auto px-6 py-14 md:py-20 flex flex-col-reverse md:flex-row items-center gap-10 md:gap-8 min-h-[360px] md:min-h-[440px]"
         >
-            <!-- Matn qismi -->
-            <div class="flex-1 max-w-md w-full">
+            <!-- Chap ~55%: matn, to'g'ridan-to'g'ri panel rangi ustida -->
+            <div class="w-full md:w-[55%] md:pr-8">
                 <Transition name="fade" mode="out-in">
                     <div v-if="!loaded" key="skeleton" class="space-y-4">
-                        <USkeleton class="h-4 w-36 rounded-full" />
-                        <USkeleton class="h-10 w-full" />
-                        <USkeleton class="h-10 w-3/4" />
-                        <USkeleton class="h-12 w-48 rounded-full mt-2" />
+                        <USkeleton class="h-4 w-36 rounded-full bg-white/15" />
+                        <USkeleton class="h-10 w-full bg-white/15" />
+                        <USkeleton class="h-10 w-3/4 bg-white/15" />
+                        <USkeleton class="h-12 w-48 rounded-full mt-2 bg-white/15" />
                     </div>
 
                     <div v-else key="content" class="space-y-4">
                         <p
-                            class="text-sm font-semibold uppercase tracking-wide text-brand-accent-dark"
+                            class="text-sm font-semibold uppercase tracking-wide text-white/70"
                         >
                             {{ slide?.eyebrow }}
                         </p>
                         <h1
-                            class="font-display text-4xl font-semibold leading-tight text-stone-900"
+                            class="font-display text-4xl font-semibold leading-tight text-white"
                         >
                             {{ slide?.title }}
                         </h1>
-                        <p class="text-lg text-stone-600">{{ slide?.subtitle }}</p>
+                        <p class="text-lg text-white/80">{{ slide?.subtitle }}</p>
                         <UButton
                             :label="slide?.cta"
                             trailing-icon="i-lucide-arrow-right"
                             size="lg"
-                            class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-full mt-2"
+                            class="bg-white text-brand-maroon hover:bg-white/90 rounded-full mt-2"
                             @click="goToCategory"
                         />
                     </div>
                 </Transition>
             </div>
 
-            <!-- Rasm qismi -->
-            <div class="flex-1 flex justify-center md:justify-end w-full">
+            <!-- O'ng ~45%: cutout buket rasmi, panel ustida suzayotgandek soya bilan -->
+            <div class="w-full md:w-[45%] flex justify-center md:justify-end">
                 <Transition name="fade" mode="out-in">
                     <USkeleton
                         v-if="!loaded"
                         key="skeleton-img"
-                        class="w-full max-w-105 aspect-4/3 rounded-3xl"
+                        class="w-full max-w-72 aspect-square rounded-3xl bg-white/10"
                     />
                     <img
                         v-else
                         key="content-img"
                         :src="slide?.image"
                         :alt="slide?.eyebrow"
-                        class="w-full max-w-105 aspect-4/3 object-cover rounded-3xl shadow-lg cursor-pointer"
+                        class="w-full max-w-72 md:max-w-sm object-contain cursor-pointer"
+                        style="filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.25))"
                         @click="goToCategory"
                     />
                 </Transition>
@@ -71,11 +77,7 @@
                 type="button"
                 :aria-label="t('hero.slideAria', { n: i + 1 })"
                 class="size-2 rounded-full transition-colors"
-                :class="
-                    loaded && i === activeIndex
-                        ? 'bg-brand-accent'
-                        : 'bg-stone-300'
-                "
+                :class="loaded && i === activeIndex ? 'bg-white' : 'bg-white/40'"
                 @click="activeIndex = i"
             />
         </div>

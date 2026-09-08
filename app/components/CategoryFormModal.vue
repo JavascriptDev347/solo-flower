@@ -82,6 +82,10 @@ async function onSubmit() {
                 name_eng: nameEng.value.trim(),
                 name_ru: nameRu.value.trim(),
             });
+            // frontend.md 3.6 — rasm alohida, PUT /categories/{id}/image orqali yangilanadi
+            if (imageFile.value) {
+                await store.updateImage(props.category.id, imageFile.value);
+            }
             notify.success("Kategoriya yangilandi");
         } else {
             await store.create({
@@ -137,7 +141,7 @@ async function onSubmit() {
                     />
                 </div>
 
-                <div v-if="!isEdit" class="form-group">
+                <div class="form-group">
                     <label>Rasm</label>
                     <div class="image-picker">
                         <img
@@ -151,7 +155,7 @@ async function onSubmit() {
                             class="btn-ghost"
                             @click="fileInput?.click()"
                         >
-                            Rasm tanlash
+                            {{ isEdit ? "Rasmni almashtirish" : "Rasm tanlash" }}
                         </button>
                         <input
                             ref="fileInput"
@@ -162,11 +166,6 @@ async function onSubmit() {
                         />
                     </div>
                 </div>
-
-                <p v-if="isEdit" class="hint-text">
-                    Tahrirlashda faqat nomni o'zgartirish mumkin, rasm
-                    o'zgarmaydi.
-                </p>
 
                 <p v-if="error" class="error-text">{{ error }}</p>
 

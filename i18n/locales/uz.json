@@ -24,7 +24,17 @@
     "condolenceBouquets": "Ta'ziya guldastalari",
     "giftBouquets": "Tabrik guldastalari",
     "whiteFlowers": "Oq gullar",
-    "language": "Til"
+    "language": "Til",
+    "navAria": "Asosiy navigatsiya",
+    "breadcrumbHome": "Bosh sahifa",
+    "nav": {
+      "bouquets": "Guldastalar",
+      "giftBoxes": "Sovg'a qutilari",
+      "congratulations": "Tabriklar",
+      "condolences": "Ta'ziya",
+      "girlsDay": "Qizlar kuni",
+      "todayDelivery": "Bugun yetkazish"
+    }
   },
   "footer": {
     "phoneLabel": "Telefon:",
@@ -50,6 +60,33 @@
   "hero": {
     "bannerAria": "Bosh banner",
     "slideAria": "{n}-slayd"
+  },
+  "navbar": {
+    "brandName": "Shukufa",
+    "brandSubtitle": "Gullar do'koni",
+    "homeAria": "Shukufa — bosh sahifa",
+    "home": "Bosh sahifa",
+    "shop": "Do'kon",
+    "howItWorks": "Qanday ishlaydi",
+    "features": "Imkoniyatlar",
+    "team": "Jamoa",
+    "pricing": "Narxlar",
+    "contact": "Bog'lanish",
+    "createAccount": "Hisob yaratish",
+    "menuAria": "Menyu",
+    "closeMenuAria": "Menyuni yopish"
+  },
+  "heroSection": {
+    "eyebrow": "Shukufaga xush kelibsiz",
+    "headline": "Chiroyli gullar, yurak bilan yetkazamiz — istalgan vaqtda,",
+    "headlineHighlight": "istalgan joyga.",
+    "paragraph": "Sevganlaringiz uchun yangi va sifatli gullarni bir necha bosishda buyurtma qiling — g'amxo'rlik ko'rsatishning eng oson yo'li.",
+    "badgeAria": "Shukufa ilovasi",
+    "storeBadgeGoogleEyebrow": "GET IT ON",
+    "storeBadgeGoogleLabel": "Google Play",
+    "storeBadgeAppleEyebrow": "Download on the",
+    "storeBadgeAppleLabel": "App Store",
+    "imageAlt": "Shukufa gullari"
   },
   "home": {
     "title": "Har lahza uchun eng go'zal gullar",
@@ -77,6 +114,7 @@
     "loginToAddToCart": "Savatga qo'shish uchun avval tizimga kiring",
     "addedToCart": "\"{name}\" savatga qo'shildi",
     "wishlistSoon": "\"{name}\" — sevimlilar funksiyasi tez orada qo'shiladi",
+    "wishlistAria": "Sevimlilar",
     "backToCatalog": "Katalogga qaytish",
     "notFoundTitle": "Mahsulot topilmadi",
     "notFoundSubtitle": "Havola noto'g'ri yoki mahsulot o'chirilgan bo'lishi mumkin",
@@ -90,6 +128,25 @@
     "reviewsSoon": "Sharh qoldirish funksiyasi tez orada qo'shiladi.",
     "pageTitleSuffix": "Katalog",
     "pageTitleFallback": "Mahsulot"
+  },
+  "productDetails": {
+    "title": "Mahsulot tafsilotlari",
+    "backAria": "Orqaga",
+    "moreOptionsAria": "Qo'shimcha amallar",
+    "readMore": "Batafsil.",
+    "showLess": "Kamroq ko'rsatish.",
+    "sizesLabel": "O'lchamlar (Bandlar soni)",
+    "sizeAria": "{size} band",
+    "sizeSelectedAria": "tanlangan",
+    "sellerRole": "Florist",
+    "messageAria": "Xabar yozish",
+    "callAria": "Qo'ng'iroq qilish",
+    "quantityLabel": "Miqdor",
+    "decreaseAria": "Kamaytirish",
+    "increaseAria": "Ko'paytirish",
+    "totalPriceLabel": "Umumiy narx",
+    "galleryPrevAria": "Oldingi rasm",
+    "galleryNextAria": "Keyingi rasm"
   },
   "catalog": {
     "categoryLabel": "Kategoriya",

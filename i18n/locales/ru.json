@@ -24,7 +24,17 @@
     "condolenceBouquets": "Траурные букеты",
     "giftBouquets": "Подарочные букеты",
     "whiteFlowers": "Белые цветы",
-    "language": "Язык"
+    "language": "Язык",
+    "navAria": "Основная навигация",
+    "breadcrumbHome": "Главная",
+    "nav": {
+      "bouquets": "Букеты",
+      "giftBoxes": "Подарочные коробки",
+      "congratulations": "Поздравления",
+      "condolences": "Соболезнования",
+      "girlsDay": "День девочек",
+      "todayDelivery": "Доставка сегодня"
+    }
   },
   "footer": {
     "phoneLabel": "Телефон:",
@@ -50,6 +60,33 @@
   "hero": {
     "bannerAria": "Главный баннер",
     "slideAria": "Слайд {n}"
+  },
+  "navbar": {
+    "brandName": "Shukufa",
+    "brandSubtitle": "Цветочный магазин",
+    "homeAria": "Shukufa — главная страница",
+    "home": "Главная",
+    "shop": "Магазин",
+    "howItWorks": "Как это работает",
+    "features": "Возможности",
+    "team": "Команда",
+    "pricing": "Цены",
+    "contact": "Контакты",
+    "createAccount": "Создать аккаунт",
+    "menuAria": "Меню",
+    "closeMenuAria": "Закрыть меню"
+  },
+  "heroSection": {
+    "eyebrow": "Добро пожаловать в Shukufa",
+    "headline": "Красивые цветы, доставленные с душой — в любое время,",
+    "headlineHighlight": "в любое место.",
+    "paragraph": "Заказывайте свежие и качественные цветы для близких в несколько кликов — самый простой способ проявить заботу.",
+    "badgeAria": "Приложение Shukufa",
+    "storeBadgeGoogleEyebrow": "GET IT ON",
+    "storeBadgeGoogleLabel": "Google Play",
+    "storeBadgeAppleEyebrow": "Download on the",
+    "storeBadgeAppleLabel": "App Store",
+    "imageAlt": "Цветы Shukufa"
   },
   "home": {
     "title": "Самые красивые цветы для каждого момента",
@@ -77,6 +114,7 @@
     "loginToAddToCart": "Войдите, чтобы добавить товар в корзину",
     "addedToCart": "«{name}» добавлен в корзину",
     "wishlistSoon": "«{name}» — функция избранного скоро появится",
+    "wishlistAria": "Избранное",
     "backToCatalog": "Вернуться в каталог",
     "notFoundTitle": "Товар не найден",
     "notFoundSubtitle": "Ссылка неверна или товар был удалён",
@@ -90,6 +128,25 @@
     "reviewsSoon": "Функция отзывов скоро появится.",
     "pageTitleSuffix": "Каталог",
     "pageTitleFallback": "Товар"
+  },
+  "productDetails": {
+    "title": "О товаре",
+    "backAria": "Назад",
+    "moreOptionsAria": "Дополнительно",
+    "readMore": "Подробнее.",
+    "showLess": "Свернуть.",
+    "sizesLabel": "Размеры (стебли)",
+    "sizeAria": "{size} стеблей",
+    "sizeSelectedAria": "выбрано",
+    "sellerRole": "Флорист",
+    "messageAria": "Написать сообщение",
+    "callAria": "Позвонить",
+    "quantityLabel": "Количество",
+    "decreaseAria": "Уменьшить",
+    "increaseAria": "Увеличить",
+    "totalPriceLabel": "Итоговая цена",
+    "galleryPrevAria": "Предыдущее фото",
+    "galleryNextAria": "Следующее фото"
   },
   "catalog": {
     "categoryLabel": "Категория",

@@ -36,16 +36,26 @@ export function useCategories() {
     formData.append("name_eng", payload.name_eng);
     formData.append("name_ru", payload.name_ru);
     formData.append("image", payload.image);
-    return upload<{ id: string }>("/categories", formData);
+    // frontend.md 3.4 — endi to'liq Category obyektini qaytaradi (faqat {id} emas)
+    return upload<Category>("/categories", formData);
   };
 
   const update = (id: string, payload: UpdateCategoryPayload) => {
     return put<null>(`/categories/${id}`, payload);
   };
 
+  // frontend.md 3.6 — kategoriya rasmini alohida yangilash (PUT + multipart)
+  const updateImage = (id: string, image: File) => {
+    const formData = new FormData();
+    formData.append("image", image);
+    return put<Category>(`/categories/${id}/image`, formData, {
+      isFormData: true,
+    });
+  };
+
   const remove = (id: string) => {
     return del<string>(`/categories/${id}`);
   };
 
-  return { list, getById, fetchAll, create, update, remove };
+  return { list, getById, fetchAll, create, update, updateImage, remove };
 }

@@ -14,10 +14,16 @@
         <main class="catalog-content">
             <!-- Yuklanmoqda -->
             <div v-if="isLoading" class="product-grid">
-                <div v-for="n in 8" :key="n" class="product-card skeleton">
-                    <div class="product-image skeleton-box" />
-                    <div class="skeleton-text" />
-                    <div class="skeleton-text skeleton-text-sm" />
+                <div
+                    v-for="n in 8"
+                    :key="n"
+                    class="rounded-2xl border border-neutral-200 overflow-hidden"
+                >
+                    <div class="w-full aspect-square skeleton-box" />
+                    <div class="p-3 space-y-2">
+                        <div class="skeleton-text" />
+                        <div class="skeleton-text skeleton-text-sm" />
+                    </div>
                 </div>
             </div>
 
@@ -46,57 +52,14 @@
                 </p>
             </div>
 
-            <!-- Mahsulotlar ro'yxati -->
+            <!-- Mahsulotlar ro'yxati: bir xil ProductCard komponenti (5.1-bo'lim) -->
             <div v-else class="product-grid">
-                <div
+                <ProductCard
                     v-for="product in products"
                     :key="product.id"
-                    class="product-card"
-                >
-                    <div class="product-image">
-                        <img
-                            v-if="product.images[0]"
-                            :src="product.images[0]"
-                            :alt="product.name"
-                            loading="lazy"
-                        />
-                        <span
-                            v-if="!product.is_available"
-                            class="unavailable-badge"
-                        >
-                            {{ t("product.unavailable") }}
-                        </span>
-                        <span
-                            v-else-if="product.discount_amount"
-                            class="discount-badge"
-                        >
-                            {{ t("product.discount") }}
-                        </span>
-                    </div>
-                    <p class="product-name">{{ product.name }}</p>
-                    <div class="product-price">
-                        <span class="price-final">
-                            {{
-                                formatPrice(
-                                    product.final_price_amount ??
-                                        product.price_amount,
-                                    product.price_currency,
-                                )
-                            }}
-                        </span>
-                        <span
-                            v-if="product.discount_amount"
-                            class="price-original"
-                        >
-                            {{
-                                formatPrice(
-                                    product.price_amount,
-                                    product.price_currency,
-                                )
-                            }}
-                        </span>
-                    </div>
-                </div>
+                    :product="product"
+                    @add-to-cart="onAddToCart"
+                />
             </div>
         </main>
     </div>
@@ -105,6 +68,9 @@
 <script setup lang="ts">
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
+import { useAuthStore } from "~/stores/identity/auth";
+import { useCartStore } from "~/stores/cart";
+import type { Product } from "~/types/product";
 import type { Lang } from "~/composables/catalog/useProducts";
 
 // /catalog faqat ?category=nomi bilan ochiladi — kategoriyasiz "barcha
@@ -121,13 +87,27 @@ const { t, locale } = useI18n();
 const route = useRoute();
 const productsStore = useProductsStore();
 const categoriesStore = useCategoriesStore();
+const authStore = useAuthStore();
+const cartStore = useCartStore();
+const notify = useNotify();
 
 const categoryName = computed(() => (route.query.category as string) || "");
 const isLoading = ref(true);
 const products = computed(() => productsStore.catalogItems);
 
-function formatPrice(amount: number | null | undefined, currency: string) {
-    return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
+// ProductGrid.vue bilan bir xil naqsh: avval login tekshiriladi, keyin savatga qo'shiladi
+async function onAddToCart(product: Product) {
+    if (!authStore.initialized) {
+        await authStore.fetchMe();
+    }
+    if (!authStore.isAuthenticated) {
+        notify.info(t("product.loginToAddToCart"));
+        await navigateTo(`/auth/login?redirect=${route.fullPath}`);
+        return;
+    }
+
+    cartStore.add(product);
+    notify.success(t("product.addedToCart", { name: product.name }));
 }
 
 async function loadProducts() {
@@ -230,82 +210,25 @@ useHead(() => ({
     margin: 0;
 }
 
-/* Mahsulotlar to'ri */
+/* Mahsulotlar to'ri: mobil 2 ustun/16px, planshet 3 ustun, desktop 4 ustun/24px
+   (kartaning o'zi endi ProductCard.vue — Tailwind orqali) */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
-.product-card {
-    display: flex;
-    flex-direction: column;
+@media (min-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
-.product-image {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #f4f4f5;
-}
-.product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.15s ease;
-}
-.product-card:hover .product-image img {
-    transform: scale(1.03);
-}
-
-.unavailable-badge,
-.discount-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 999px;
-    color: #fff;
-}
-.unavailable-badge {
-    background: #9a9aa2;
-}
-.discount-badge {
-    background: var(--color-primary, #e0568c);
-}
-
-.product-name {
-    margin: 10px 0 4px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #1a1a1a;
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.product-price {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-.price-final {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--color-primary, #e0568c);
-}
-.price-original {
-    font-size: 12px;
-    color: #9a9aa2;
-    text-decoration: line-through;
+@media (min-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
 }
 
 /* Skeleton */
@@ -337,13 +260,6 @@ useHead(() => ({
 }
 
 /* Mobil */
-@media (max-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-    }
-}
-
 @media (max-width: 640px) {
     .catalog-page {
         flex-direction: column;

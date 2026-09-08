@@ -24,7 +24,17 @@
     "condolenceBouquets": "Condolence bouquets",
     "giftBouquets": "Gift bouquets",
     "whiteFlowers": "White flowers",
-    "language": "Language"
+    "language": "Language",
+    "navAria": "Main navigation",
+    "breadcrumbHome": "Home",
+    "nav": {
+      "bouquets": "Bouquets",
+      "giftBoxes": "Gift Boxes",
+      "congratulations": "Congratulations",
+      "condolences": "Condolences",
+      "girlsDay": "Girls' Day",
+      "todayDelivery": "Today's Delivery"
+    }
   },
   "footer": {
     "phoneLabel": "Phone:",
@@ -50,6 +60,33 @@
   "hero": {
     "bannerAria": "Main banner",
     "slideAria": "Slide {n}"
+  },
+  "navbar": {
+    "brandName": "Shukufa",
+    "brandSubtitle": "Flower Shop",
+    "homeAria": "Shukufa — home page",
+    "home": "Home",
+    "shop": "Shop",
+    "howItWorks": "How It Works",
+    "features": "Features",
+    "team": "Team",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "createAccount": "Create Account",
+    "menuAria": "Menu",
+    "closeMenuAria": "Close menu"
+  },
+  "heroSection": {
+    "eyebrow": "Welcome to Shukufa",
+    "headline": "Beautiful blooms, delivered with heart — anytime,",
+    "headlineHighlight": "anywhere.",
+    "paragraph": "Order fresh, high-quality flowers for your loved ones in just a few clicks — the easiest way to show you care.",
+    "badgeAria": "Shukufa app",
+    "storeBadgeGoogleEyebrow": "GET IT ON",
+    "storeBadgeGoogleLabel": "Google Play",
+    "storeBadgeAppleEyebrow": "Download on the",
+    "storeBadgeAppleLabel": "App Store",
+    "imageAlt": "Shukufa flowers"
   },
   "home": {
     "title": "The most beautiful flowers for every moment",
@@ -77,6 +114,7 @@
     "loginToAddToCart": "Please sign in to add items to your cart",
     "addedToCart": "\"{name}\" was added to your cart",
     "wishlistSoon": "\"{name}\" — wishlist feature is coming soon",
+    "wishlistAria": "Wishlist",
     "backToCatalog": "Back to catalog",
     "notFoundTitle": "Product not found",
     "notFoundSubtitle": "The link may be incorrect or the product has been removed",
@@ -90,6 +128,25 @@
     "reviewsSoon": "The review feature is coming soon.",
     "pageTitleSuffix": "Catalog",
     "pageTitleFallback": "Product"
+  },
+  "productDetails": {
+    "title": "Product Details",
+    "backAria": "Back",
+    "moreOptionsAria": "More options",
+    "readMore": "Read more.",
+    "showLess": "Show less.",
+    "sizesLabel": "Sizes (Stems)",
+    "sizeAria": "{size} stems",
+    "sizeSelectedAria": "selected",
+    "sellerRole": "Florist",
+    "messageAria": "Send a message",
+    "callAria": "Call",
+    "quantityLabel": "Quantity",
+    "decreaseAria": "Decrease",
+    "increaseAria": "Increase",
+    "totalPriceLabel": "Total Price",
+    "galleryPrevAria": "Previous image",
+    "galleryNextAria": "Next image"
   },
   "catalog": {
     "categoryLabel": "Category",

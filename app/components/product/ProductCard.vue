@@ -1,106 +1,101 @@
 <template>
-    <div class="product-card">
+    <NuxtLink
+        :to="`/product/${product.slug}`"
+        class="group flex flex-col rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-colors hover:border-brand-primary"
+    >
         <!-- Rasm qismi -->
-        <div class="card-media">
+        <div class="relative aspect-square bg-brand-cream">
             <img
                 v-if="coverImage"
                 :src="coverImage"
                 :alt="product.name"
-                class="card-image"
+                class="w-full h-full object-cover"
             />
-            <div v-else class="card-image-placeholder">
+            <div
+                v-else
+                class="w-full h-full flex items-center justify-center text-neutral-400"
+            >
                 <UIcon name="i-lucide-image-off" class="size-8" />
             </div>
 
-            <!-- Holat belgisi (mavjud emas) -->
+            <!-- Chap yuqori burchak: mavjud emas yoki chegirma foizi -->
             <span
                 v-if="!product.is_available"
-                class="status-badge status-unavailable"
+                class="absolute top-2 left-2 rounded-full bg-neutral-500 text-white text-caption font-semibold px-2.5 py-1"
             >
                 {{ t("product.unavailable") }}
             </span>
-            <span v-else-if="product.tag" class="status-badge status-tag">
-                {{ product.tag }}
+            <span
+                v-else-if="discountPercent"
+                class="absolute top-2 left-2 rounded-full bg-brand-primary-soft text-brand-primary text-caption font-semibold px-2.5 py-1"
+            >
+                -{{ discountPercent }}%
             </span>
+
+            <!-- O'ng yuqori burchak: sevimlilar (navigatsiyani to'xtatish uchun stop) -->
+            <button
+                type="button"
+                class="absolute top-2 right-2 size-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-colors"
+                :class="isWishlisted ? 'text-brand-primary' : 'text-neutral-500 hover:text-brand-primary'"
+                :aria-pressed="isWishlisted"
+                :aria-label="t('product.wishlistAria')"
+                @click.stop="onToggleWishlist"
+            >
+                <UIcon
+                    name="i-lucide-heart"
+                    class="size-4"
+                    :class="{ 'fill-current': isWishlisted }"
+                />
+            </button>
         </div>
 
         <!-- Kontent qismi -->
-        <div class="card-body">
-            <!-- Mahsulot nomi -->
-            <h3 class="card-title">
-                <NuxtLink
-                    :to="`/product/${product.slug}`"
-                    class="card-title-link"
-                >
-                    {{ product.name }}
-                </NuxtLink>
+        <div class="flex flex-col gap-2 p-3">
+            <h3 class="text-h3 font-bold text-neutral-900 line-clamp-2 min-h-[2.5em]">
+                {{ product.name }}
             </h3>
 
-            <!-- Reyting va Sevimlilar (bitta qatorda) -->
-            <div class="rating-wishlist-row">
-                <div v-if="product.rating" class="card-rating">
-                    <UIcon name="i-lucide-star" class="size-4 star-filled" />
-                    <span>{{ Number(product.rating).toFixed(1) }}</span>
-                </div>
-                <div v-else></div>
-
-                <button
-                    type="button"
-                    class="wishlist-btn"
-                    :class="{ active: isWishlisted }"
-                    :aria-pressed="isWishlisted"
-                    @click.stop="$emit('toggle-wishlist', product)"
-                >
-                    <UIcon name="i-lucide-heart" class="size-5" />
-                </button>
+            <div v-if="product.rating" class="flex items-center gap-1 text-caption font-semibold text-neutral-900">
+                <UIcon name="i-lucide-star" class="size-4 text-brand-primary fill-current" />
+                <span>{{ Number(product.rating).toFixed(1) }}</span>
             </div>
 
-            <div class="divider"></div>
-
-            <!-- Narxlar va Chegirma foizi -->
-            <div class="price-discount-row">
-                <div class="price-stack">
-                    <span class="price-final">
-                        {{
-                            formatPrice(
-                                product.final_price_amount ??
-                                    product.price_amount,
-                                product.price_currency,
-                            )
-                        }}
-                    </span>
-                    <span v-if="product.discount_amount" class="price-original">
-                        {{
-                            formatPrice(
-                                product.price_amount,
-                                product.price_currency,
-                            )
-                        }}
-                    </span>
-                </div>
-
+            <!-- Narxlar va chegirma foizi -->
+            <div class="flex items-center flex-wrap gap-2">
+                <span class="text-h3 font-bold text-neutral-900">
+                    {{
+                        formatPrice(
+                            product.final_price_amount ?? product.price_amount,
+                            product.price_currency,
+                        )
+                    }}
+                </span>
+                <span
+                    v-if="product.discount_amount"
+                    class="text-caption text-neutral-500 line-through"
+                >
+                    {{ formatPrice(product.price_amount, product.price_currency) }}
+                </span>
                 <span
                     v-if="discountPercent"
-                    class="status-badge status-discount"
+                    class="ml-auto rounded-full bg-brand-primary-soft text-brand-primary text-caption font-semibold px-2 py-0.5"
                 >
                     -{{ discountPercent }}%
                 </span>
             </div>
 
-            <!-- Pastki Savatga tugmasi -->
-            <div class="cart-action">
-                <UButton
-                    :label="t('product.addToCart')"
-                    trailing-icon="i-lucide-shopping-cart"
-                    size="md"
-                    block
-                    :disabled="!product.is_available"
-                    class="add-to-cart-btn bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-full"
-                    @click.stop="$emit('add-to-cart', product)"
-                />
-            </div>
+            <!-- Savatga qo'shish (navigatsiyani to'xtatish uchun stop) -->
+            <UButton
+                :label="t('product.addToCart')"
+                trailing-icon="i-lucide-shopping-cart"
+                size="md"
+                block
+                :disabled="!product.is_available"
+                class="bg-brand-primary hover:bg-brand-primary-hover text-white rounded-full mt-1"
+                @click.stop="$emit('add-to-cart', product)"
+            />
         </div>
-    </div>
+    </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -110,13 +105,23 @@ const { t } = useI18n();
 
 const props = defineProps<{
     product: Product;
-    isWishlisted?: boolean;
 }>();
 
 defineEmits<{
-    (e: "toggle-wishlist", product: Product): void;
     (e: "add-to-cart", product: Product): void;
 }>();
+
+const wishlistStore = useWishlistStore();
+
+onMounted(() => {
+    wishlistStore.load();
+});
+
+const isWishlisted = computed(() => wishlistStore.has(props.product.id));
+
+function onToggleWishlist() {
+    wishlistStore.toggle(props.product.id);
+}
 
 const coverImage = computed(() => props.product.images?.[0]);
 
@@ -131,179 +136,3 @@ function formatPrice(amount: number | null | undefined, currency: string) {
     return `${(amount ?? 0).toLocaleString("uz-UZ")} ${currency}`;
 }
 </script>
-
-<style scoped>
-.product-card {
-    display: flex;
-    flex-direction: column;
-    width: 320px;
-    background: #ffffff;
-    border: 1px solid #fecdd3;
-    border-radius: 28px;
-    padding: 14px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s;
-}
-
-.product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-}
-
-.card-media {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #fdf2f4;
-}
-
-.card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.card-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fda4af;
-}
-
-.status-badge {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-}
-
-.status-unavailable {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #71717a;
-    color: #fff;
-}
-
-.status-tag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: var(--color-primary, #e0568c);
-    color: #fff;
-    text-transform: capitalize;
-}
-
-.status-discount {
-    background: #ffe4e6;
-    color: #e11d48;
-}
-
-.card-body {
-    display: flex;
-    flex-direction: column;
-    padding: 12px 6px 4px;
-}
-
-.card-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-    line-height: 1.4;
-    margin: 0 0 10px;
-    text-align: left;
-}
-
-.card-title-link {
-    color: inherit;
-    text-decoration: none;
-}
-
-.rating-wishlist-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.star-filled {
-    color: #e11d48;
-}
-
-.wishlist-btn {
-    background: transparent;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-        color 0.15s,
-        transform 0.15s;
-}
-
-.wishlist-btn:hover {
-    transform: scale(1.1);
-    color: #e11d48;
-}
-
-.wishlist-btn.active {
-    color: #e11d48;
-}
-
-.wishlist-btn.active :deep(svg) {
-    fill: currentColor;
-}
-
-.divider {
-    height: 1px;
-    background-color: #f3f4f6;
-    margin: 10px 0;
-}
-
-.price-discount-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
-.price-stack {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.price-final {
-    font-size: 18px;
-    font-weight: 800;
-    color: #111827;
-}
-
-.price-original {
-    font-size: 13px;
-    color: #9ca3af;
-    text-decoration: line-through;
-}
-
-.cart-action {
-    margin-top: 4px;
-}
-</style>

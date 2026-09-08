@@ -1,6 +1,7 @@
 <template>
+    <AppHero />
+    <CategoryGrid />
     <section class="bg-white py-24 px-6 text-center">
-        <AppHero />
         <div class="max-w-xl mx-auto flex flex-col items-center gap-5">
             <h1 class="text-4xl font-extrabold text-gray-900 m-0 leading-tight">
                 {{ t("home.title") }}
@@ -10,7 +11,6 @@
             </p>
         </div>
     </section>
-    <CategoryGrid />
     <ProductGrid />
 </template>
 

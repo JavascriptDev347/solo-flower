@@ -60,8 +60,9 @@ export const useCategoriesStore = defineStore("categories", {
     }) {
       const { create } = useCategories();
       const result = await create(payload);
-      // API faqat { id } qaytaradi — to'liq kategoriya emas, shuning uchun
-      // ro'yxatlarga optimistik push qilmaymiz, keshlarni bekor qilamiz
+      // frontend.md 3.4 — to'liq Category qaytadi, lekin admin ro'yxati
+      // (adminItems) alohida keshlanadi, shuning uchun baribir uni qayta
+      // yuklash kerak — faqat public keshni (items) bekor qilamiz
       this.loaded = false;
       return result;
     },
@@ -73,6 +74,14 @@ export const useCategoriesStore = defineStore("categories", {
       const { update } = useCategories();
       const result = await update(id, payload);
       // API hech narsa qaytarmaydi (null), shuning uchun keshlarni bekor qilamiz
+      this.loaded = false;
+      return result;
+    },
+
+    async updateImage(id: string, image: File) {
+      const { updateImage } = useCategories();
+      const result = await updateImage(id, image);
+      // frontend.md 3.6 — image_url o'zgargani uchun keshni bekor qilamiz
       this.loaded = false;
       return result;
     },
