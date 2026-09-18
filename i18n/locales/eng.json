@@ -133,7 +133,9 @@
   },
   "category": {
     "title": "Categories",
-    "empty": "No categories found"
+    "empty": "No categories found",
+    "all": "All",
+    "collapse": "Collapse"
   },
   "product": {
     "title": "Products",

@@ -1,8 +1,18 @@
 <template>
     <section class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16 py-12 md:py-16 lg:py-20">
-        <h2 v-if="title" class="text-h2 font-heading text-center text-neutral-900 mb-6 md:mb-8">
-            {{ title }}
-        </h2>
+        <div class="mb-6 flex items-center justify-between gap-4 md:mb-8">
+            <h2 v-if="title" class="text-h2 font-heading text-neutral-900">
+                {{ title }}
+            </h2>
+            <button
+                v-if="!pending && categories.length"
+                type="button"
+                class="shrink-0 rounded-full px-4 py-2 text-caption font-semibold text-brand-primary transition-colors hover:bg-brand-cream"
+                @click="showAll = !showAll"
+            >
+                {{ t(showAll ? "category.collapse" : "category.all") }}
+            </button>
+        </div>
 
         <!-- Skeleton -->
         <div
@@ -24,18 +34,20 @@
             {{ t("category.empty") }}
         </div>
 
-        <!-- Mobil: gorizontal snap-scroll bitta qator, scrollbar yashirilgan.
-             Desktop (lg): statik grid, 5 ustun — hech qanday scroll yo'q. -->
-        <div
-            v-else
-            class="flex md:grid md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pr-10 md:pr-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-            <CategoryItem
-                v-for="cat in categories"
-                :key="cat.id"
-                :category="cat"
-                class="snap-start md:snap-align-none"
-            />
+        <div v-else-if="showAll" class="flex flex-wrap justify-center gap-4 md:gap-6">
+            <CategoryItem v-for="cat in categories" :key="cat.id" :category="cat" />
+        </div>
+
+        <div v-else class="marquee-viewport">
+            <div class="marquee-track">
+                <div v-for="copy in 2" :key="copy" class="marquee-group">
+                    <CategoryItem
+                        v-for="cat in categories"
+                        :key="`${copy}-${cat.id}`"
+                        :category="cat"
+                    />
+                </div>
+            </div>
         </div>
     </section>
 </template>
@@ -68,4 +80,43 @@ watch(locale, (newLocale) => {
 
 const categories = computed(() => store.items);
 const pending = computed(() => store.loading);
+const showAll = ref(false);
 </script>
+
+<style scoped>
+.marquee-viewport {
+    overflow: hidden;
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: category-marquee 30s linear infinite;
+}
+
+.marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-right: 1rem;
+}
+
+.marquee-viewport:hover .marquee-track,
+.marquee-viewport:active .marquee-track {
+    animation-play-state: paused;
+}
+
+@media (min-width: 768px) {
+    .marquee-group {
+        gap: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@keyframes category-marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+</style>

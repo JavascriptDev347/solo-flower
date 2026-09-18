@@ -6,7 +6,7 @@
          emas, chunki orqa fon endi "band" surat emas) -->
     <section
         v-if="!loaded || slides.length"
-        class="relative w-full overflow-hidden bg-brand-maroon"
+        class="relative w-full overflow-hidden bg-gradient-to-br from-brand-maroon to-brand-maroon/90"
         :aria-busy="!loaded"
         :aria-label="t('hero.bannerAria')"
     >
@@ -52,17 +52,21 @@
                     <USkeleton
                         v-if="!loaded"
                         key="skeleton-img"
-                        class="w-full max-w-72 aspect-square rounded-3xl bg-white/10"
+                        class="w-full max-w-72 md:max-w-sm aspect-square rounded-3xl bg-white/10"
                     />
-                    <img
+                    <div
                         v-else
                         key="content-img"
-                        :src="slide?.image"
-                        :alt="slide?.eyebrow"
-                        class="w-full max-w-72 md:max-w-sm object-contain cursor-pointer"
+                        class="w-full max-w-72 md:max-w-sm aspect-square overflow-hidden rounded-3xl cursor-pointer"
                         style="filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.25))"
                         @click="goToCategory"
-                    />
+                    >
+                        <img
+                            :src="slide?.image"
+                            :alt="slide?.eyebrow"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
                 </Transition>
             </div>
         </div>

@@ -133,7 +133,9 @@
   },
   "category": {
     "title": "Kategoriyalar",
-    "empty": "Kategoriyalar topilmadi"
+    "empty": "Kategoriyalar topilmadi",
+    "all": "Barchasi",
+    "collapse": "Yig'ish"
   },
   "product": {
     "title": "Mahsulotlar",

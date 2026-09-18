@@ -16,7 +16,7 @@
                 @swiper="onSwiper"
                 @slide-change="syncNavigation"
             >
-                <SwiperSlide v-for="product in products" :key="product.id">
+                <SwiperSlide v-for="product in products" :key="product.id" class="h-full">
                     <ProductCard :product="product" />
                 </SwiperSlide>
             </Swiper>

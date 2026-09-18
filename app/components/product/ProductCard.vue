@@ -1,6 +1,6 @@
 <template>
     <article
-        class="group flex flex-col rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-colors hover:border-brand-primary"
+        class="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-colors hover:border-brand-primary"
     >
         <!-- Rasm qismi -->
         <div class="relative aspect-square bg-brand-cream">
@@ -49,7 +49,7 @@
         </div>
 
         <!-- Kontent qismi -->
-        <div class="flex flex-col gap-2 p-3">
+        <div class="flex flex-1 flex-col gap-2 p-3">
             <NuxtLink
                 :to="`/product/${product.slug}`"
                 class="text-neutral-900 transition-colors hover:text-brand-primary"
@@ -59,9 +59,11 @@
                 </h3>
             </NuxtLink>
 
-            <div v-if="product.rating" class="flex items-center gap-1 text-caption font-semibold text-neutral-900">
-                <UIcon name="i-lucide-star" class="size-4 text-brand-primary fill-current" />
-                <span>{{ Number(product.rating).toFixed(1) }}</span>
+            <div class="flex h-5 items-center gap-1 text-caption font-semibold text-neutral-900">
+                <template v-if="product.rating">
+                    <UIcon name="i-lucide-star" class="size-4 text-brand-primary fill-current" />
+                    <span>{{ Number(product.rating).toFixed(1) }}</span>
+                </template>
             </div>
 
             <!-- Narxlar va chegirma foizi -->
@@ -95,7 +97,7 @@
                 size="lg"
                 block
                 :disabled="!product.is_available"
-                class="bg-brand-primary hover:bg-brand-primary-hover hover:cursor-pointer py-2 px-4 text-white rounded-full mt-1"
+                class="mt-auto bg-brand-primary hover:bg-brand-primary-hover hover:cursor-pointer py-2 px-4 text-white rounded-full"
                 @click="$emit('add-to-cart', product)"
             />
         </div>
