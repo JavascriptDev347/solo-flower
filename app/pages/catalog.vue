@@ -1,277 +1,202 @@
 <template>
-    <div class="catalog-page">
-        <!-- Chap tomonda kategoriya nomi -->
-        <aside class="catalog-sidebar">
-            <div class="category-badge">
-                <span class="category-label">{{ t("catalog.categoryLabel") }}</span>
-                <h1 class="category-title">
-                    {{ categoryName }}
-                </h1>
-            </div>
-        </aside>
+    <main class="mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 md:py-8 lg:px-10">
+        <nav class="mb-6 flex items-center gap-2 overflow-x-auto text-caption text-neutral-500" :aria-label="t('catalog.breadcrumbAria')">
+            <NuxtLink to="/" class="shrink-0 hover:text-brand-primary">{{ t("catalog.home") }}</NuxtLink>
+            <UIcon name="i-lucide-chevron-right" class="size-4 shrink-0" />
+            <span class="shrink-0 font-medium text-neutral-900">{{ breadcrumbLabel }}</span>
+        </nav>
 
-        <!-- Mahsulotlar qismi -->
-        <main class="catalog-content">
-            <!-- Yuklanmoqda -->
-            <div v-if="isLoading" class="product-grid">
-                <div
-                    v-for="n in 8"
-                    :key="n"
-                    class="rounded-2xl border border-neutral-200 overflow-hidden"
-                >
-                    <div class="w-full aspect-square skeleton-box" />
-                    <div class="p-3 space-y-2">
-                        <div class="skeleton-text" />
-                        <div class="skeleton-text skeleton-text-sm" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bo'sh holat -->
-            <div v-else-if="!products.length" class="empty-state">
-                <div class="empty-icon">
-                    <svg
-                        width="64"
-                        height="64"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M3 9L4.5 4h15L21 9M3 9v10a1 1 0 001 1h16a1 1 0 001-1V9M3 9h18M9 13a3 3 0 006 0"
-                            stroke="#B0B0B8"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-                </div>
-                <p class="empty-title">{{ t("catalog.empty") }}</p>
-                <p class="empty-subtitle">
-                    {{ t("catalog.emptySubtitle", { category: categoryName }) }}
+        <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <h1 class="text-display-sm font-heading text-neutral-900">{{ pageTitle }}</h1>
+                <p class="mt-2 text-body text-neutral-600">
+                    {{ t("catalog.resultCount", { count: productsStore.catalogPagination?.total_items ?? 0 }) }}
                 </p>
             </div>
-
-            <!-- Mahsulotlar ro'yxati: bir xil ProductCard komponenti (5.1-bo'lim) -->
-            <div v-else class="product-grid">
-                <ProductCard
-                    v-for="product in products"
-                    :key="product.id"
-                    :product="product"
-                    @add-to-cart="onAddToCart"
-                />
+            <div class="flex gap-2 lg:hidden">
+                <UButton icon="i-lucide-arrow-down-up" :label="t('catalog.sort')" variant="outline" color="neutral" class="rounded-full" @click="isSortOpen = true" />
+                <UButton icon="i-lucide-sliders-horizontal" :label="t('catalog.filter')" class="rounded-full bg-brand-primary text-white hover:bg-brand-primary-hover" @click="isFilterOpen = true" />
             </div>
-        </main>
-    </div>
+        </div>
+
+        <div class="mb-6 hidden gap-2 overflow-x-auto lg:flex">
+            <button
+                v-for="option in sortOptions"
+                :key="option.value"
+                type="button"
+                class="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+                :class="sort === option.value ? 'bg-brand-primary text-white' : 'text-neutral-700 hover:bg-brand-cream'"
+                @click="setSort(option.value)"
+            >
+                {{ option.label }}
+            </button>
+        </div>
+
+        <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <section>
+                <div v-if="isLoading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                    <div v-for="n in 8" :key="n" class="overflow-hidden rounded-2xl border border-neutral-200">
+                        <USkeleton class="aspect-square w-full rounded-none" />
+                        <div class="space-y-2 p-3"><USkeleton class="h-4 w-full" /><USkeleton class="h-4 w-1/3" /></div>
+                    </div>
+                </div>
+                <div v-else-if="!displayedProducts.length" class="rounded-2xl border border-neutral-200 bg-white px-6 py-16 text-center">
+                    <UIcon name="i-lucide-package-open" class="mx-auto size-14 text-neutral-400" />
+                    <h2 class="mt-5 text-h2 font-heading text-neutral-900">{{ t("catalog.empty") }}</h2>
+                    <p class="mx-auto mt-2 max-w-md text-body text-neutral-600">{{ t("catalog.emptySubtitle", { category: categoryName || t("catalog.allProducts") }) }}</p>
+                </div>
+                <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                    <ProductCard v-for="product in displayedProducts" :key="product.id" :product="product" @add-to-cart="onAddToCart" />
+                </div>
+
+                <div v-if="totalPages > 1" class="mt-8 flex items-center justify-center gap-2">
+                    <UButton icon="i-lucide-chevron-left" color="neutral" variant="ghost" class="size-10 justify-center rounded-full" :disabled="currentPage <= 1" :aria-label="t('gallery.previousPage')" @click="goToPage(currentPage - 1)" />
+                    <button
+                        v-for="pageNumber in totalPages"
+                        :key="pageNumber"
+                        type="button"
+                        class="flex size-10 items-center justify-center rounded-full text-sm font-semibold transition-colors"
+                        :class="pageNumber === currentPage ? 'bg-brand-primary text-white' : 'text-neutral-700 hover:bg-brand-cream'"
+                        @click="goToPage(pageNumber)"
+                    >{{ pageNumber }}</button>
+                    <UButton icon="i-lucide-chevron-right" color="neutral" variant="ghost" class="size-10 justify-center rounded-full" :disabled="currentPage >= totalPages" :aria-label="t('gallery.nextPage')" @click="goToPage(currentPage + 1)" />
+                </div>
+            </section>
+
+            <aside class="sticky top-24 hidden rounded-2xl border border-neutral-200 bg-white p-5 lg:block">
+                <CatalogFilter :category="draftCategory" :price-from="priceFrom" :price-to="priceTo" @apply="applyFilters" />
+            </aside>
+        </div>
+
+        <USlideover v-model:open="isSortOpen" side="bottom" :ui="{ content: 'bg-white rounded-t-2xl' }">
+            <template #header><h2 class="text-h2 font-heading text-neutral-900">{{ t("catalog.sort") }}</h2></template>
+            <template #body>
+                <div class="space-y-2">
+                    <button v-for="option in sortOptions" :key="option.value" type="button" class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-body" :class="sort === option.value ? 'bg-brand-primary-soft text-brand-primary font-semibold' : 'text-neutral-700'" @click="setSort(option.value); isSortOpen = false">
+                        {{ option.label }}<UIcon v-if="sort === option.value" name="i-lucide-check" class="size-5" />
+                    </button>
+                </div>
+            </template>
+        </USlideover>
+
+        <USlideover v-model:open="isFilterOpen" side="bottom" :ui="{ content: 'bg-white rounded-t-2xl' }">
+            <template #header><h2 class="text-h2 font-heading text-neutral-900">{{ t("catalog.filter") }}</h2></template>
+            <template #body><CatalogFilter :category="draftCategory" :price-from="priceFrom" :price-to="priceTo" @apply="applyFilters" /></template>
+        </USlideover>
+    </main>
 </template>
 
 <script setup lang="ts">
 import { useProductsStore } from "~/stores/catalog/products";
 import { useCategoriesStore } from "~/stores/catalog/categories";
 import { useAuthStore } from "~/stores/identity/auth";
-import { useCartStore } from "~/stores/cart";
+import { useCartStore } from "~/stores/commerce/cart";
 import type { Product } from "~/types/product";
 import type { Lang } from "~/composables/catalog/useProducts";
 
-// /catalog faqat ?category=nomi bilan ochiladi — kategoriyasiz "barcha
-// mahsulotlar" ko'rinishi yo'q, shuning uchun bosh sahifaga qaytaramiz
-definePageMeta({
-    middleware: [
-        (to) => {
-            if (!to.query.category) return navigateTo("/");
-        },
-    ],
-});
-
 const { t, locale } = useI18n();
 const route = useRoute();
+const router = useRouter();
 const productsStore = useProductsStore();
 const categoriesStore = useCategoriesStore();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const notify = useNotify();
-
-const categoryName = computed(() => (route.query.category as string) || "");
 const isLoading = ref(true);
+const isSortOpen = ref(false);
+const isFilterOpen = ref(false);
+const sort = ref("newest");
+const priceFrom = ref<number | undefined>();
+const priceTo = ref<number | undefined>();
+const draftCategory = ref("");
+const pageSize = 20;
+
+const categoryName = computed(() => String(route.query.category ?? ""));
+const searchQuery = computed(() => String(route.query.search ?? ""));
+const currentPage = computed(() => Math.max(1, Number(route.query.page ?? 1) || 1));
+const category = computed(() => categoryName.value ? categoriesStore.byName(categoryName.value) : undefined);
+const pageTitle = computed(() => categoryName.value || (searchQuery.value ? t("catalog.searchTitle", { query: searchQuery.value }) : t("catalog.allProducts")));
+const breadcrumbLabel = computed(() => categoryName.value || (searchQuery.value ? t("catalog.searchResults") : t("catalog.catalogLabel")));
+const totalPages = computed(() => productsStore.catalogPagination?.total_pages ?? 1);
 const products = computed(() => productsStore.catalogItems);
 
-// ProductGrid.vue bilan bir xil naqsh: avval login tekshiriladi, keyin savatga qo'shiladi
-async function onAddToCart(product: Product) {
-    if (!authStore.initialized) {
-        await authStore.fetchMe();
-    }
-    if (!authStore.isAuthenticated) {
-        notify.info(t("product.loginToAddToCart"));
-        await navigateTo(`/auth/login?redirect=${route.fullPath}`);
-        return;
-    }
+const sortOptions = computed(() => [
+    { value: "lowest", label: t("catalog.sortLowest") },
+    { value: "highest", label: t("catalog.sortHighest") },
+    { value: "newest", label: t("catalog.sortNewest") },
+    { value: "bestSelling", label: t("catalog.sortBestSelling") },
+    { value: "discount", label: t("catalog.sortDiscount") },
+]);
 
-    cartStore.add(product);
-    notify.success(t("product.addedToCart", { name: product.name }));
+const displayedProducts = computed(() => {
+    const result = products.value.filter((product) => {
+        const price = product.final_price_amount ?? product.price_amount;
+        return (priceFrom.value == null || price >= priceFrom.value) && (priceTo.value == null || price <= priceTo.value);
+    });
+    return result.sort((a, b) => {
+        if (sort.value === "lowest") return effectivePrice(a) - effectivePrice(b);
+        if (sort.value === "highest") return effectivePrice(b) - effectivePrice(a);
+        if (sort.value === "bestSelling") return b.sold_count - a.sold_count;
+        if (sort.value === "discount") return discountPercent(b) - discountPercent(a);
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+});
+
+function effectivePrice(product: Product) {
+    return product.final_price_amount ?? product.price_amount;
+}
+function discountPercent(product: Product) {
+    return product.price_amount ? (1 - effectivePrice(product) / product.price_amount) * 100 : 0;
 }
 
 async function loadProducts() {
     isLoading.value = true;
     try {
         await categoriesStore.fetchAll(false, locale.value as Lang);
-        const category = categoryName.value
-            ? categoriesStore.byName(categoryName.value)
-            : undefined;
         await productsStore.fetchCatalog({
-            category_id: category?.id,
+            category_id: category.value?.id,
+            search: searchQuery.value || undefined,
             lang: locale.value as Lang,
+            page: currentPage.value,
+            page_size: pageSize,
         });
     } catch {
-        // xato allaqachon useApi ichida notify qilingan
+        // Xato useApi tomonidan ko'rsatiladi.
     } finally {
         isLoading.value = false;
     }
 }
 
-watch([categoryName, locale], loadProducts);
-onMounted(loadProducts);
+function setSort(value: string) {
+    sort.value = value;
+}
+function goToPage(page: number) {
+    if (page < 1 || page > totalPages.value || page === currentPage.value) return;
+    router.replace({ query: { ...route.query, page: String(page) } });
+}
+function applyFilters(value: { category: string; priceFrom?: number; priceTo?: number }) {
+    priceFrom.value = value.priceFrom;
+    priceTo.value = value.priceTo;
+    draftCategory.value = value.category;
+    const query = { ...route.query, page: "1" } as Record<string, string>;
+    if (draftCategory.value) query.category = draftCategory.value;
+    else delete query.category;
+    router.replace({ query });
+    isFilterOpen.value = false;
+}
 
-useHead(() => ({
-    title: categoryName.value
-        ? `${categoryName.value} — ${t("catalog.pageTitleFallback")}`
-        : t("catalog.pageTitleFallback"),
-}));
+async function onAddToCart(product: Product) {
+    if (!authStore.initialized) await authStore.fetchMe();
+    if (!authStore.isAuthenticated) {
+        notify.info(t("product.loginToAddToCart"));
+        await navigateTo(`/auth/login?redirect=${route.fullPath}`);
+        return;
+    }
+    await cartStore.addItem(product.id);
+    notify.success(t("product.addedToCart", { name: product.name }));
+}
+
+watch([categoryName, searchQuery, currentPage, locale], loadProducts, { immediate: true });
+watch(categoryName, (value) => { draftCategory.value = value; }, { immediate: true });
+useHead(() => ({ title: `${pageTitle.value} — ${t("catalog.pageTitleFallback")}` }));
 </script>
-
-<style scoped>
-.catalog-page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 16px;
-    gap: 32px;
-}
-
-/* Chap panel */
-.catalog-sidebar {
-    flex: 0 0 220px;
-}
-
-.category-badge {
-    position: sticky;
-    top: 24px;
-}
-
-.category-label {
-    display: block;
-    font-size: 12px;
-    color: #9a9aa2;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-}
-
-.category-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #1a1a1a;
-    line-height: 1.3;
-    margin: 0;
-}
-
-/* O'ng qism */
-.catalog-content {
-    margin-top: 25px;
-    min-width: 0;
-    min-height: 400px;
-}
-
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    text-align: center;
-    padding: 60px 20px;
-}
-
-.empty-icon {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 16px;
-    opacity: 0.8;
-}
-
-.empty-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 6px;
-}
-
-.empty-subtitle {
-    font-size: 14px;
-    color: #9a9aa2;
-    margin: 0;
-}
-
-/* Mahsulotlar to'ri: mobil 2 ustun/16px, planshet 3 ustun, desktop 4 ustun/24px
-   (kartaning o'zi endi ProductCard.vue — Tailwind orqali) */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
-@media (min-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    .product-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-    }
-}
-
-/* Skeleton */
-.skeleton-box {
-    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-}
-.skeleton-text {
-    margin-top: 10px;
-    width: 80%;
-    height: 12px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-}
-.skeleton-text-sm {
-    margin-top: 6px;
-    width: 40%;
-}
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-/* Mobil */
-@media (max-width: 640px) {
-    .catalog-page {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .catalog-sidebar {
-        flex: none;
-    }
-
-    .category-badge {
-        position: static;
-    }
-}
-</style>

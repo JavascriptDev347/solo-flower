@@ -81,8 +81,8 @@ export function useProducts() {
       params as Record<string, any>,
     );
 
-  const getById = (id: string, lang?: Lang) =>
-    get<Product>(`/products/${id}`, lang ? { lang } : undefined);
+  const getById = (id: string, lang?: Lang, opts?: { silent?: boolean }) =>
+    get<Product>(`/products/${id}`, lang ? { lang } : undefined, opts);
 
   const getBySlug = (slug: string, lang?: Lang) =>
     get<Product>(`/products/slug/${slug}`, lang ? { lang } : undefined);

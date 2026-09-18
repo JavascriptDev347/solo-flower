@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { useProductsStore } from "~/stores/catalog/products";
 import { useAuthStore } from "~/stores/identity/auth";
-import { useCartStore } from "~/stores/cart";
+import { useCartStore } from "~/stores/commerce/cart";
 import type { Product } from "~/types/product";
 import type { Lang } from "~/composables/catalog/useProducts";
 
@@ -79,7 +79,7 @@ async function onAddToCart(product: Product) {
         return;
     }
 
-    cartStore.add(product);
+    await cartStore.addItem(product.id);
     notify.success(t("product.addedToCart", { name: product.name }));
 }
 </script>

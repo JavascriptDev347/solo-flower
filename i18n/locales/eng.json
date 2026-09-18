@@ -8,6 +8,7 @@
     "openSearchAria": "Open search",
     "searchLabel": "Search:",
     "homeAria": "Shukufa — home page",
+    "phoneAria": "Phone number: +998 90 123 45 67",
     "login": "Sign in",
     "wishlistAria": "Wishlist",
     "cartAria": "Cart",
@@ -37,29 +38,29 @@
     }
   },
   "footer": {
+    "backToTop": "Back to top",
     "phoneLabel": "Phone:",
+    "phone": "+998 91 234 56 78",
     "hoursLabel": "Working hours:",
-    "rights": "All rights reserved — Shukufa © 2026",
+    "hours": "08:00–21:00 (UTC+5)",
+    "tagline": "Fresh flowers for every moment.",
+    "copyright": "© {year} Shukufa. All rights reserved.",
+    "categories": { "title": "Categories" },
     "about": {
       "title": "About us",
-      "links": ["About Shukufa", "FAQ", "Contact", "Customer reviews", "Partnership"]
-    },
-    "quick": {
-      "title": "Quick links",
-      "links": ["Best sellers", "Gift flowers", "Condolence flowers", "Discounts", "Blog"]
-    },
-    "categories": {
-      "title": "Categories",
-      "links": ["Bouquets", "Vase flowers", "Sunflowers", "Roses", "Orchids"]
+      "links": { "about": "About Shukufa", "contact": "Contact us", "terms": "Terms of use", "privacy": "Privacy policy" }
     },
     "help": {
       "title": "Help",
-      "links": ["Delivery", "Payment methods", "Returns", "Privacy policy", "Terms of use"]
-    }
+      "links": { "delivery": "Delivery", "payment": "Payment methods", "returns": "Returns" }
+    },
+    "social": { "telegram": "Telegram", "youtube": "YouTube", "instagram": "Instagram", "x": "X" }
   },
   "hero": {
     "bannerAria": "Main banner",
-    "slideAria": "Slide {n}"
+    "slideAria": "Slide {n}",
+    "previousSlideAria": "Previous slide",
+    "nextSlideAria": "Next slide"
   },
   "navbar": {
     "brandName": "Shukufa",
@@ -89,8 +90,37 @@
     "imageAlt": "Shukufa flowers"
   },
   "home": {
-    "title": "The most beautiful flowers for every moment",
-    "subtitle": "Order fresh, high-quality flowers for your loved ones today."
+    "seeMore": "See more",
+    "bestSellers": {
+      "title": "Best sellers"
+    },
+    "offers": {
+      "title": "Special offers",
+      "countdownLabel": "Offer ends in:"
+    },
+    "carouselPrevious": "Previous slide",
+    "carouselNext": "Next slide",
+    "whyUsPhoto": {
+      "freshness": { "title": "Fresh every day", "description": "We choose blooms at their best." },
+      "delivery": { "title": "Careful delivery", "description": "Your bouquet arrives beautifully." },
+      "quality": { "title": "Trusted quality", "description": "Thoughtful flowers for every moment." },
+      "care": { "title": "Made with care", "description": "Every order is prepared with heart." }
+    },
+    "whyUsIcons": {
+      "freshness": { "title": "Fresh flowers", "description": "Selected with care" },
+      "delivery": { "title": "Fast delivery", "description": "Across the city" },
+      "support": { "title": "Friendly support", "description": "Here when you need us" }
+    },
+    "testimonials": {
+      "title": "What customers say",
+      "purchasedProduct": "Purchased product:",
+      "goToProduct": "Go to product",
+      "items": {
+        "one": { "name": "Madina R.", "quote": "The bouquet looked even more beautiful than the photos. It arrived fresh and right on time." },
+        "two": { "name": "James K.", "quote": "A lovely ordering experience from start to finish. My family was delighted." },
+        "three": { "name": "Dilnoza A.", "quote": "Wonderful flowers and kind service. I will definitely order from Shukufa again." }
+      }
+    }
   },
   "mobileTabBar": {
     "navAria": "Mobile navigation",
@@ -125,7 +155,18 @@
     "order": "Order now",
     "description": "Description",
     "reviews": "Reviews ({count})",
-    "reviewsSoon": "The review feature is coming soon.",
+    "verifiedBuyer": "Verified buyer",
+    "noReviews": "No reviews yet.",
+    "loadMoreReviews": "Load more",
+    "loadingReviews": "Loading...",
+    "leaveReview": "Leave a review",
+    "ratingLabel": "Rating",
+    "ratingRequired": "Choose a rating to continue.",
+    "commentLabel": "Comment (optional)",
+    "commentPlaceholder": "Share your thoughts about this product",
+    "submitReview": "Submit review",
+    "submittingReview": "Submitting...",
+    "reviewSubmitted": "Your review was submitted.",
     "pageTitleSuffix": "Catalog",
     "pageTitleFallback": "Product"
   },
@@ -149,10 +190,109 @@
     "galleryNextAria": "Next image"
   },
   "catalog": {
+    "home": "Home",
+    "catalogLabel": "Catalog",
+    "breadcrumbAria": "Catalog breadcrumb",
+    "allProducts": "All products",
+    "searchResults": "Search results",
+    "searchTitle": "Search for \"{query}\"",
+    "resultCount": "{count} products found",
+    "sort": "Sort",
+    "filter": "Filter",
+    "sortLowest": "Lowest price",
+    "sortHighest": "Highest price",
+    "sortNewest": "Newest",
+    "sortBestSelling": "Best selling",
+    "sortDiscount": "Biggest discount",
+    "price": "Price",
+    "from": "From",
+    "to": "To",
+    "applyFilter": "Apply filter",
+    "clearCategory": "Clear category",
     "categoryLabel": "Category",
     "empty": "No products yet",
     "emptySubtitle": "Products for \"{category}\" will be added soon",
     "pageTitleFallback": "Catalog"
+  },
+  "cart": {
+    "title": "Cart",
+    "pageTitle": "Cart",
+    "itemCount": "{count} item(s)",
+    "itemsLabel": "Cart items",
+    "emptyTitle": "Your cart is empty",
+    "emptySubtitle": "Choose your favorite flowers and start placing an order.",
+    "backToCatalog": "Back to catalog",
+    "unavailable": "This product is no longer available, please remove it",
+    "removeAria": "Remove item",
+    "decreaseAria": "Decrease quantity",
+    "increaseAria": "Increase quantity",
+    "summaryTitle": "Order summary",
+    "subtotal": "Subtotal",
+    "discount": "Product discount",
+    "grandTotal": "Grand total",
+    "continue": "Continue"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "pageTitle": "Checkout",
+    "subtitle": "Enter your delivery details",
+    "address": "Delivery address",
+    "addressPlaceholder": "Enter your full address",
+    "addressRequired": "Please enter your address",
+    "phone": "Phone number",
+    "phonePlaceholder": "+998901234567",
+    "phoneInvalid": "Phone number must start with +998 and contain 9 digits",
+    "note": "Note",
+    "notePlaceholder": "Additional note for your order (optional)",
+    "submit": "Place order",
+    "successTitle": "Order placed successfully",
+    "successMessage": "Your order has been received. We will contact you soon.",
+    "orderId": "Order ID",
+    "itemsTitle": "Order items",
+    "total": "Total",
+    "paymentStatus": {
+      "unpaid": "Unpaid",
+      "paid": "Paid"
+    },
+    "deliveryStatus": {
+      "preparing": "Preparing",
+      "handed_to_courier": "Handed to courier",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "continueShopping": "Continue shopping",
+    "viewOrder": "View order"
+  },
+  "orders": {
+    "title": "My Orders",
+    "pageTitle": "My Orders",
+    "count": "{count} order(s)",
+    "orderId": "Order ID",
+    "itemsCount": "{count} item(s)",
+    "emptyTitle": "You have no orders yet",
+    "emptySubtitle": "Choose your favorite flowers and place your first order.",
+    "backToCatalog": "Go to catalog",
+    "backToOrders": "Back to My Orders",
+    "detailTitle": "Order details",
+    "detailPageTitle": "Order details"
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "pageTitle": "Wishlist",
+    "itemCount": "{count} item(s)",
+    "emptyTitle": "Your wishlist is empty",
+    "emptySubtitle": "Save flowers you love by tapping the heart.",
+    "backToCatalog": "Go to catalog",
+    "loginRequired": "Please sign in to add items to your wishlist"
+  },
+  "gallery": {
+    "title": "Our work",
+    "pageTitle": "Our work",
+    "subtitle": "Explore bouquets and floral arrangements created by Shukufa.",
+    "emptyTitle": "The gallery is empty",
+    "emptySubtitle": "Our latest work will appear here soon.",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
   },
   "auth": {
     "login": {

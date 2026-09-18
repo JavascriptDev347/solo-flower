@@ -53,12 +53,12 @@ const items = computed(() => [
               {
                   label: t("mobileTabBar.cart"),
                   icon: "i-lucide-shopping-cart",
-                  to: "#",
+                  to: "/cart",
               },
               {
                   label: t("mobileTabBar.wishlist"),
                   icon: "i-lucide-heart",
-                  to: "#",
+                  to: "/wishlist",
               },
           ]),
     { label: t("mobileTabBar.profile"), icon: "i-lucide-user", to: "#" },

@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import type { RegisterPayload, LoginPayload, MeResponse } from "~/types/auth";
 import { ApiError } from "~/types/api";
 import { useAuth } from "~/composables/identity/useAuth";
+import { useCartStore } from "~/stores/commerce/cart";
+import { useWishlistStore } from "~/stores/commerce/wishlist";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -48,6 +50,8 @@ export const useAuthStore = defineStore("auth", {
 
     logout() {
       const { clearTokens } = useAuthToken();
+      useCartStore().reset();
+      useWishlistStore().reset();
       clearTokens();
       this.user = null;
       navigateTo("/auth/login");

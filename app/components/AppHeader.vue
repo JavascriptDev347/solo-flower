@@ -18,26 +18,39 @@
                     >
                 </NuxtLink>
 
-                <UInput
-                    v-model="query"
-                    icon="i-lucide-search"
-                    size="lg"
-                    :placeholder="t('header.searchPlaceholder')"
-                    class="flex-1 max-w-xl mx-auto"
-                    :ui="{ base: 'rounded-full bg-neutral-50' }"
-                />
+                <form class="flex-1 max-w-xl mx-auto" @submit.prevent="onSearchSubmit">
+                    <UInput
+                        v-model="query"
+                        leading-icon="i-lucide-search"
+                        size="lg"
+                        :placeholder="t('header.searchPlaceholder')"
+                        class="w-full"
+                        :ui="{ base: 'rounded-full bg-neutral-50' }"
+                    />
+                </form>
+
+                <a
+                    href="tel:+998901234567"
+                    class="flex shrink-0 items-center gap-2 text-neutral-700 transition-colors hover:text-brand-primary"
+                    :aria-label="t('header.phoneAria')"
+                >
+                    <UIcon name="i-lucide-phone" class="size-5" />
+                    <span class="text-body font-medium">+998 90 123 45 67</span>
+                </a>
 
                 <div class="flex items-center gap-4 shrink-0">
                     <AppLocaleSwitcher />
 
-                    <UButton
-                        variant="ghost"
-                        color="neutral"
-                        icon="i-lucide-heart"
-                        square
-                        class="rounded-full"
-                        :aria-label="t('header.wishlistAria')"
-                    />
+                    <NuxtLink to="/wishlist">
+                        <UButton
+                            variant="ghost"
+                            color="neutral"
+                            icon="i-lucide-heart"
+                            square
+                            class="rounded-full"
+                            :aria-label="t('header.wishlistAria')"
+                        />
+                    </NuxtLink>
 
                     <UChip
                         :text="cartCount"
@@ -45,14 +58,16 @@
                         size="sm"
                         :ui="{ base: 'ring-2 ring-white bg-brand-primary text-white font-bold' }"
                     >
-                        <UButton
-                            variant="ghost"
-                            color="neutral"
-                            icon="i-lucide-shopping-cart"
-                            square
-                            class="rounded-full"
-                            :aria-label="t('header.cartAria')"
-                        />
+                        <NuxtLink to="/cart">
+                            <UButton
+                                variant="ghost"
+                                color="neutral"
+                                icon="i-lucide-shopping-cart"
+                                square
+                                class="rounded-full"
+                                :aria-label="t('header.cartAria')"
+                            />
+                        </NuxtLink>
                     </UChip>
 
                     <!-- Login qilinmagan holat -->
@@ -124,14 +139,16 @@
                     >
                 </NuxtLink>
 
-                <UInput
-                    v-model="query"
-                    icon="i-lucide-search"
-                    size="lg"
-                    :placeholder="t('header.searchPlaceholder')"
-                    class="flex-1 min-w-0"
-                    :ui="{ base: 'rounded-full bg-neutral-50' }"
-                />
+                <form class="flex-1 min-w-0" @submit.prevent="onSearchSubmit">
+                    <UInput
+                        v-model="query"
+                        leading-icon="i-lucide-search"
+                        size="lg"
+                        :placeholder="t('header.searchPlaceholder')"
+                        class="w-full"
+                        :ui="{ base: 'rounded-full bg-neutral-50' }"
+                    />
+                </form>
 
                 <UButton
                     icon="i-lucide-menu"
@@ -320,6 +337,7 @@
                         :label="t('header.allCategories')"
                         block
                         class="bg-brand-maroon hover:bg-brand-maroon-soft text-white rounded-xl"
+                        @click="onAllCategoriesClick"
                     />
 
                     <div
@@ -339,24 +357,47 @@
 </template>
 
 <script setup lang="ts">
+import { useCartStore } from "~/stores/commerce/cart";
+import { useCategoriesStore } from "~/stores/catalog/categories";
+import type { Lang } from "~/composables/catalog/useCategories";
+
 interface BreadcrumbItem {
     label: string;
     to?: string;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const query = ref("");
 const isMenuOpen = ref(false);
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
+const categoriesStore = useCategoriesStore();
 
-onMounted(() => {
-    cartStore.load();
+try {
+    await categoriesStore.fetchAll(false, locale.value as Lang);
+} catch {
+    // Xato useApi orqali ko'rsatiladi; header qolgan navigatsiyani saqlab qoladi.
+}
+
+onMounted(async () => {
+    if (!authStore.initialized) await authStore.fetchMe();
+    if (authStore.isAuthenticated) await cartStore.fetch();
 });
 
-const cartCount = computed(() => cartStore.totalCount);
+watch(
+    () => authStore.isAuthenticated,
+    (authenticated) => {
+        if (authenticated) {
+            cartStore.fetch();
+        } else {
+            cartStore.reset();
+        }
+    },
+);
+
+const cartCount = computed(() => cartStore.totalItems);
 
 // Sahifa `definePageMeta({ breadcrumb: [{ label, to }] })` orqali beradi;
 // bermasa qator umuman ko'rsatilmaydi (hozircha hech qanday sahifa bermaydi).
@@ -364,16 +405,17 @@ const breadcrumbItems = computed(
     () => (route.meta.breadcrumb as BreadcrumbItem[] | undefined) ?? [],
 );
 
-// Desktop 2-qator va mobil menyudagi asosiy nav ro'yxati (hali maxsus
-// sahifalar/filtrlar yo'q — havolalar keyingi bosqichda ulanadi)
-const navItems = computed(() => [
-    { key: "bouquets", label: t("header.nav.bouquets"), to: "#" },
-    { key: "giftBoxes", label: t("header.nav.giftBoxes"), to: "#" },
-    { key: "congratulations", label: t("header.nav.congratulations"), to: "#" },
-    { key: "condolences", label: t("header.nav.condolences"), to: "#" },
-    { key: "girlsDay", label: t("header.nav.girlsDay"), to: "#" },
-    { key: "todayDelivery", label: t("header.nav.todayDelivery"), to: "#" },
-]);
+watch(locale, (newLocale) => {
+    categoriesStore.fetchAll(false, newLocale as Lang).catch(() => {});
+});
+
+const navItems = computed(() =>
+    categoriesStore.items.slice(0, 7).map((category) => ({
+        key: category.id,
+        label: category.name,
+        to: { path: "/catalog", query: { category: category.name } },
+    })),
+);
 
 const userMenuItems = computed(() => [
     [
@@ -414,5 +456,16 @@ function onLogout() {
 function onMobileLoginClick() {
     isMenuOpen.value = false;
     navigateTo("/auth/login");
+}
+
+function onAllCategoriesClick() {
+    isMenuOpen.value = false;
+    navigateTo("/catalog");
+}
+
+function onSearchSubmit() {
+    const search = query.value.trim();
+    isMenuOpen.value = false;
+    navigateTo({ path: "/catalog", query: search ? { search } : {} });
 }
 </script>

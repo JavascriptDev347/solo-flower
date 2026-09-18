@@ -81,6 +81,28 @@
                 @click="activeIndex = i"
             />
         </div>
+
+        <div
+            v-if="slides.length > 1 && loaded"
+            class="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none"
+        >
+            <button
+                type="button"
+                class="pointer-events-auto size-10 rounded-full bg-white text-brand-maroon shadow-sm flex items-center justify-center"
+                :aria-label="t('hero.previousSlideAria')"
+                @click="goToPrevious"
+            >
+                <UIcon name="i-lucide-chevron-left" class="size-5" />
+            </button>
+            <button
+                type="button"
+                class="pointer-events-auto size-10 rounded-full bg-white text-brand-maroon shadow-sm flex items-center justify-center"
+                :aria-label="t('hero.nextSlideAria')"
+                @click="goToNext"
+            >
+                <UIcon name="i-lucide-chevron-right" class="size-5" />
+            </button>
+        </div>
     </section>
 </template>
 
@@ -102,6 +124,14 @@ const loaded = ref(false);
 const activeIndex = ref(0);
 const slides = computed(() => store.items);
 const slide = computed(() => slides.value[activeIndex.value] ?? slides.value[0]);
+
+function goToPrevious() {
+    activeIndex.value = (activeIndex.value - 1 + slides.value.length) % slides.value.length;
+}
+
+function goToNext() {
+    activeIndex.value = (activeIndex.value + 1) % slides.value.length;
+}
 
 const categoryName = computed(() => {
     const categoryId = slide.value?.category_id;

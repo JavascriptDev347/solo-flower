@@ -8,6 +8,7 @@
     "openSearchAria": "Qidiruvni ochish",
     "searchLabel": "Qidirish:",
     "homeAria": "Shukufa — bosh sahifa",
+    "phoneAria": "Telefon raqami: +998 90 123 45 67",
     "login": "Kirish",
     "wishlistAria": "Sevimlilar",
     "cartAria": "Savat",
@@ -37,29 +38,29 @@
     }
   },
   "footer": {
+    "backToTop": "Yuqoriga qaytish",
     "phoneLabel": "Telefon:",
+    "phone": "+998 91 234 56 78",
     "hoursLabel": "Ish vaqti:",
-    "rights": "Barcha huquqlar himoyalangan — Shukufa © 2026",
+    "hours": "08:00–21:00 (UTC+5)",
+    "tagline": "Har bir lahza uchun yangi gullar.",
+    "copyright": "© {year} Shukufa. Barcha huquqlar himoyalangan.",
+    "categories": { "title": "Kategoriyalar" },
     "about": {
       "title": "Biz haqimizda",
-      "links": ["Shukufa haqida", "Savol-javob", "Bog'lanish", "Mijozlar fikri", "Hamkorlik"]
-    },
-    "quick": {
-      "title": "Tezkor havolalar",
-      "links": ["Eng ko'p sotilganlar", "Tabrik gullari", "Ta'ziya gullari", "Chegirmalar", "Blog"]
-    },
-    "categories": {
-      "title": "Kategoriyalar",
-      "links": ["Buketlar", "Guldon gullar", "Quyoshgullar", "Atirgullar", "Orxideyalar"]
+      "links": { "about": "Shukufa haqida", "contact": "Bog'lanish", "terms": "Foydalanish shartlari", "privacy": "Maxfiylik siyosati" }
     },
     "help": {
       "title": "Yordam",
-      "links": ["Yetkazib berish", "To'lov usullari", "Qaytarish", "Maxfiylik siyosati", "Foydalanish shartlari"]
-    }
+      "links": { "delivery": "Yetkazib berish", "payment": "To'lov usullari", "returns": "Qaytarish" }
+    },
+    "social": { "telegram": "Telegram", "youtube": "YouTube", "instagram": "Instagram", "x": "X" }
   },
   "hero": {
     "bannerAria": "Bosh banner",
-    "slideAria": "{n}-slayd"
+    "slideAria": "{n}-slayd",
+    "previousSlideAria": "Oldingi slayd",
+    "nextSlideAria": "Keyingi slayd"
   },
   "navbar": {
     "brandName": "Shukufa",
@@ -89,8 +90,37 @@
     "imageAlt": "Shukufa gullari"
   },
   "home": {
-    "title": "Har lahza uchun eng go'zal gullar",
-    "subtitle": "Sevganlaringiz uchun yangi va sifatli gullarni bugun buyurtma qiling."
+    "seeMore": "Ko'proq ko'rish",
+    "bestSellers": {
+      "title": "Eng ko'p sotilganlar"
+    },
+    "offers": {
+      "title": "Maxsus takliflar",
+      "countdownLabel": "Taklif tugashiga:"
+    },
+    "carouselPrevious": "Oldingi slayd",
+    "carouselNext": "Keyingi slayd",
+    "whyUsPhoto": {
+      "freshness": { "title": "Har kuni yangi", "description": "Gullarni eng yaxshi paytida tanlaymiz." },
+      "delivery": { "title": "Ehtiyotkor yetkazish", "description": "Buket sizga chiroyli holatda yetadi." },
+      "quality": { "title": "Ishonchli sifat", "description": "Har lahza uchun o'ylangan gullar." },
+      "care": { "title": "Mehr bilan tayyorlanadi", "description": "Har bir buyurtma e'tibor bilan tayyorlanadi." }
+    },
+    "whyUsIcons": {
+      "freshness": { "title": "Yangi gullar", "description": "E'tibor bilan tanlangan" },
+      "delivery": { "title": "Tez yetkazish", "description": "Shahar bo'ylab" },
+      "support": { "title": "Samimiy yordam", "description": "Siz uchun doim shu yerdamiz" }
+    },
+    "testimonials": {
+      "title": "Mijozlarimiz fikri",
+      "purchasedProduct": "Xarid qilingan mahsulot:",
+      "goToProduct": "Mahsulotga o'tish",
+      "items": {
+        "one": { "name": "Madina R.", "quote": "Buket rasmdagidan ham chiroyli ekan. U juda yangi va o'z vaqtida yetkazildi." },
+        "two": { "name": "Jeyms K.", "quote": "Buyurtma berish boshidan oxirigacha juda qulay bo'ldi. Oilam xursand bo'ldi." },
+        "three": { "name": "Dilnoza A.", "quote": "Ajoyib gullar va samimiy xizmat. Shukufadan yana buyurtma beraman." }
+      }
+    }
   },
   "mobileTabBar": {
     "navAria": "Mobil navigatsiya",
@@ -125,7 +155,18 @@
     "order": "Buyurtma berish",
     "description": "Tavsif",
     "reviews": "Sharhlar ({count})",
-    "reviewsSoon": "Sharh qoldirish funksiyasi tez orada qo'shiladi.",
+    "verifiedBuyer": "Tasdiqlangan xaridor",
+    "noReviews": "Hozircha sharhlar yo'q.",
+    "loadMoreReviews": "Ko'proq ko'rsatish",
+    "loadingReviews": "Yuklanmoqda...",
+    "leaveReview": "Sharh qoldirish",
+    "ratingLabel": "Baho",
+    "ratingRequired": "Davom etish uchun bahoni tanlang.",
+    "commentLabel": "Izoh (ixtiyoriy)",
+    "commentPlaceholder": "Mahsulot haqidagi fikringizni yozing",
+    "submitReview": "Sharhni yuborish",
+    "submittingReview": "Yuborilmoqda...",
+    "reviewSubmitted": "Sharhingiz yuborildi.",
     "pageTitleSuffix": "Katalog",
     "pageTitleFallback": "Mahsulot"
   },
@@ -149,10 +190,109 @@
     "galleryNextAria": "Keyingi rasm"
   },
   "catalog": {
+    "home": "Bosh sahifa",
+    "catalogLabel": "Katalog",
+    "breadcrumbAria": "Katalog yo'li",
+    "allProducts": "Barcha mahsulotlar",
+    "searchResults": "Qidiruv natijalari",
+    "searchTitle": "\"{query}\" bo'yicha qidiruv",
+    "resultCount": "{count} ta mahsulot topildi",
+    "sort": "Saralash",
+    "filter": "Filtr",
+    "sortLowest": "Eng arzon",
+    "sortHighest": "Eng qimmat",
+    "sortNewest": "Eng yangi",
+    "sortBestSelling": "Eng ko'p sotilgan",
+    "sortDiscount": "Eng katta chegirma",
+    "price": "Narx",
+    "from": "Dan",
+    "to": "Gacha",
+    "applyFilter": "Filtrni qo'llash",
+    "clearCategory": "Kategoriyani tozalash",
     "categoryLabel": "Kategoriya",
     "empty": "Mahsulotlar hozircha yo'q",
     "emptySubtitle": "\"{category}\" bo'yicha mahsulotlar tez orada qo'shiladi",
     "pageTitleFallback": "Katalog"
+  },
+  "cart": {
+    "title": "Savat",
+    "pageTitle": "Savat",
+    "itemCount": "{count} ta mahsulot",
+    "itemsLabel": "Savatdagi mahsulotlar",
+    "emptyTitle": "Savatingiz bo'sh",
+    "emptySubtitle": "Sevimli gullaringizni tanlang va buyurtma berishni boshlang.",
+    "backToCatalog": "Katalogga o'tish",
+    "unavailable": "Bu mahsulot endi mavjud emas, iltimos olib tashlang",
+    "removeAria": "Mahsulotni olib tashlash",
+    "decreaseAria": "Miqdorni kamaytirish",
+    "increaseAria": "Miqdorni oshirish",
+    "summaryTitle": "Buyurtma xulosasi",
+    "subtotal": "Oraliq summa",
+    "discount": "Mahsulot chegirmasi",
+    "grandTotal": "Jami",
+    "continue": "Davom etish"
+  },
+  "checkout": {
+    "title": "Buyurtmani rasmiylashtirish",
+    "pageTitle": "Buyurtmani rasmiylashtirish",
+    "subtitle": "Yetkazib berish ma'lumotlarini kiriting",
+    "address": "Yetkazib berish manzili",
+    "addressPlaceholder": "To'liq manzilingizni kiriting",
+    "addressRequired": "Manzilni kiriting",
+    "phone": "Telefon raqami",
+    "phonePlaceholder": "+998901234567",
+    "phoneInvalid": "Telefon raqami +998 va 9 ta raqamdan iborat bo'lishi kerak",
+    "note": "Izoh",
+    "notePlaceholder": "Buyurtma bo'yicha qo'shimcha izoh (ixtiyoriy)",
+    "submit": "Buyurtma berish",
+    "successTitle": "Buyurtma muvaffaqiyatli berildi",
+    "successMessage": "Buyurtmangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.",
+    "orderId": "Buyurtma raqami",
+    "itemsTitle": "Buyurtma tarkibi",
+    "total": "Jami",
+    "paymentStatus": {
+      "unpaid": "To'lanmagan",
+      "paid": "To'langan"
+    },
+    "deliveryStatus": {
+      "preparing": "Tayyorlanmoqda",
+      "handed_to_courier": "Kuryerga berildi",
+      "delivered": "Yetkazib berildi",
+      "cancelled": "Bekor qilindi"
+    },
+    "continueShopping": "Xaridni davom ettirish",
+    "viewOrder": "Buyurtmani ko'rish"
+  },
+  "orders": {
+    "title": "Buyurtmalarim",
+    "pageTitle": "Buyurtmalarim",
+    "count": "{count} ta buyurtma",
+    "orderId": "Buyurtma raqami",
+    "itemsCount": "{count} ta mahsulot",
+    "emptyTitle": "Sizda hali buyurtmalar yo'q",
+    "emptySubtitle": "Sevimli gullaringizni tanlang va birinchi buyurtmangizni bering.",
+    "backToCatalog": "Katalogga o'tish",
+    "backToOrders": "Buyurtmalarimga qaytish",
+    "detailTitle": "Buyurtma tafsilotlari",
+    "detailPageTitle": "Buyurtma tafsilotlari"
+  },
+  "wishlist": {
+    "title": "Sevimlilar",
+    "pageTitle": "Sevimlilar",
+    "itemCount": "{count} ta mahsulot",
+    "emptyTitle": "Sevimlilaringiz hozircha bo'sh",
+    "emptySubtitle": "Yoqtirgan gullaringizni yurakcha orqali saqlab qo'ying.",
+    "backToCatalog": "Katalogga o'tish",
+    "loginRequired": "Sevimlilarga qo'shish uchun avval tizimga kiring"
+  },
+  "gallery": {
+    "title": "Bizning ishlarimiz",
+    "pageTitle": "Bizning ishlarimiz",
+    "subtitle": "Shukufa yaratgan guldastalar va gul kompozitsiyalarini tomosha qiling.",
+    "emptyTitle": "Galereya hozircha bo'sh",
+    "emptySubtitle": "Tez orada bu yerda yangi ishlarimiz paydo bo'ladi.",
+    "previousPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa"
   },
   "auth": {
     "login": {

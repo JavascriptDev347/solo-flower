@@ -32,7 +32,7 @@ The `app/` directory follows Nuxt 4's `srcDir` convention. Feature code is organ
 
 - `composables/catalog/` (`useProducts`, `useCategories`, `useEvents`) and `composables/identity/` (`useAuth`) — thin wrappers around `useApi()` that define request/payload types and call specific endpoints. These do not hold state.
 - `stores/catalog/` and `stores/identity/` (Pinia, configured via `pinia.storesDirs: ["./stores/**"]`) — hold state and caching logic, call the composables above. This composable → store split is consistent across every domain; follow it for new features.
-- `stores/cart.ts` is the exception — a client-only cart persisted to `localStorage` (guarded by `import.meta.client` checks), not backed by the API.
+- `stores/commerce/cart.ts` is the API-backed cart store and follows the same composable → store split as every other domain.
 
 ### API layer (`composables/useApi.ts`)
 

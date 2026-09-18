@@ -21,6 +21,9 @@
     --color-brand-primary: #e0568c;
     --color-brand-primary-hover: #c8447a;
     --color-brand-primary-soft: #fdf0f4;
+    --color-brand-accent-green: #1fa971;
+    --color-brand-accent-green-soft: #e7f8ef;
+    --color-discount-bg: #fdeaf0;
 
     /* flower-shop-ui-spec.md — 1-bo'lim: Design tokens.
        Yangi spec asosidagi komponentlar (AppNavbar, HeroSection va h.k.)

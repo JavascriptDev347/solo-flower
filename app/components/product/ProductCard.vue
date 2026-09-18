@@ -1,6 +1,5 @@
 <template>
-    <NuxtLink
-        :to="`/product/${product.slug}`"
+    <article
         class="group flex flex-col rounded-2xl border border-neutral-200 bg-white overflow-hidden transition-colors hover:border-brand-primary"
     >
         <!-- Rasm qismi -->
@@ -32,28 +31,33 @@
                 -{{ discountPercent }}%
             </span>
 
-            <!-- O'ng yuqori burchak: sevimlilar (navigatsiyani to'xtatish uchun stop) -->
+            <!-- O'ng yuqori burchak: sevimlilar. Diqqat: UIcon css-mask span
+                 sifatida chiziladi (haqiqiy <svg> emas), shuning uchun
+                 "fill-current" hech narsaga ta'sir qilmaydi va lucide'da
+                 "to'ldirilgan" yurakcha varianti ham yo'q — shu sabab holatni
+                 icon-fill emas, tugma foni orqali ko'rsatamiz -->
             <button
                 type="button"
-                class="absolute top-2 right-2 size-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-colors"
-                :class="isWishlisted ? 'text-brand-primary' : 'text-neutral-500 hover:text-brand-primary'"
+                class="absolute top-2 right-2 size-8 rounded-full shadow-sm flex items-center justify-center transition-colors"
+                :class="isWishlisted ? 'bg-brand-primary text-white' : 'bg-white text-neutral-500 hover:text-brand-primary'"
                 :aria-pressed="isWishlisted"
                 :aria-label="t('product.wishlistAria')"
-                @click.stop="onToggleWishlist"
+                @click="onToggleWishlist"
             >
-                <UIcon
-                    name="i-lucide-heart"
-                    class="size-4"
-                    :class="{ 'fill-current': isWishlisted }"
-                />
+                <UIcon name="i-lucide-heart" class="size-4" />
             </button>
         </div>
 
         <!-- Kontent qismi -->
         <div class="flex flex-col gap-2 p-3">
-            <h3 class="text-h3 font-bold text-neutral-900 line-clamp-2 min-h-[2.5em]">
-                {{ product.name }}
-            </h3>
+            <NuxtLink
+                :to="`/product/${product.slug}`"
+                class="text-neutral-900 transition-colors hover:text-brand-primary"
+            >
+                <h3 class="text-h3 font-bold line-clamp-2 min-h-[2.5em]">
+                    {{ product.name }}
+                </h3>
+            </NuxtLink>
 
             <div v-if="product.rating" class="flex items-center gap-1 text-caption font-semibold text-neutral-900">
                 <UIcon name="i-lucide-star" class="size-4 text-brand-primary fill-current" />
@@ -84,24 +88,29 @@
                 </span>
             </div>
 
-            <!-- Savatga qo'shish (navigatsiyani to'xtatish uchun stop) -->
+            <!-- Savatga qo'shish -->
             <UButton
                 :label="t('product.addToCart')"
                 trailing-icon="i-lucide-shopping-cart"
-                size="md"
+                size="lg"
                 block
                 :disabled="!product.is_available"
-                class="bg-brand-primary hover:bg-brand-primary-hover text-white rounded-full mt-1"
-                @click.stop="$emit('add-to-cart', product)"
+                class="bg-brand-primary hover:bg-brand-primary-hover hover:cursor-pointer py-2 px-4 text-white rounded-full mt-1"
+                @click="$emit('add-to-cart', product)"
             />
         </div>
-    </NuxtLink>
+    </article>
 </template>
 
 <script setup lang="ts">
 import type { Product } from "~/types/product";
+import { useWishlistStore } from "~/stores/commerce/wishlist";
+import { useAuthStore } from "~/stores/identity/auth";
 
 const { t } = useI18n();
+const route = useRoute();
+const authStore = useAuthStore();
+const notify = useNotify();
 
 const props = defineProps<{
     product: Product;
@@ -113,14 +122,27 @@ defineEmits<{
 
 const wishlistStore = useWishlistStore();
 
-onMounted(() => {
-    wishlistStore.load();
+onMounted(async () => {
+    if (!authStore.initialized) {
+        await authStore.fetchMe();
+    }
+    if (authStore.isAuthenticated) {
+        await wishlistStore.fetch();
+    }
 });
 
 const isWishlisted = computed(() => wishlistStore.has(props.product.id));
 
-function onToggleWishlist() {
-    wishlistStore.toggle(props.product.id);
+async function onToggleWishlist() {
+    if (!authStore.initialized) {
+        await authStore.fetchMe();
+    }
+    if (!authStore.isAuthenticated) {
+        notify.info(t("wishlist.loginRequired"));
+        await navigateTo(`/auth/login?redirect=${route.fullPath}`);
+        return;
+    }
+    await wishlistStore.toggle(props.product.id);
 }
 
 const coverImage = computed(() => props.product.images?.[0]);

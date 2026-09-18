@@ -8,6 +8,7 @@
     "openSearchAria": "Открыть поиск",
     "searchLabel": "Поиск:",
     "homeAria": "Shukufa — главная страница",
+    "phoneAria": "Номер телефона: +998 90 123 45 67",
     "login": "Войти",
     "wishlistAria": "Избранное",
     "cartAria": "Корзина",
@@ -37,29 +38,29 @@
     }
   },
   "footer": {
+    "backToTop": "Наверх",
     "phoneLabel": "Телефон:",
+    "phone": "+998 91 234 56 78",
     "hoursLabel": "Часы работы:",
-    "rights": "Все права защищены — Shukufa © 2026",
+    "hours": "08:00–21:00 (UTC+5)",
+    "tagline": "Свежие цветы для каждого момента.",
+    "copyright": "© {year} Shukufa. Все права защищены.",
+    "categories": { "title": "Категории" },
     "about": {
       "title": "О нас",
-      "links": ["О Shukufa", "Вопрос-ответ", "Связаться с нами", "Отзывы клиентов", "Сотрудничество"]
-    },
-    "quick": {
-      "title": "Быстрые ссылки",
-      "links": ["Хиты продаж", "Подарочные цветы", "Траурные цветы", "Скидки", "Блог"]
-    },
-    "categories": {
-      "title": "Категории",
-      "links": ["Букеты", "Цветы в вазе", "Подсолнухи", "Розы", "Орхидеи"]
+      "links": { "about": "О Shukufa", "contact": "Связаться с нами", "terms": "Условия использования", "privacy": "Политика конфиденциальности" }
     },
     "help": {
       "title": "Помощь",
-      "links": ["Доставка", "Способы оплаты", "Возврат", "Политика конфиденциальности", "Условия использования"]
-    }
+      "links": { "delivery": "Доставка", "payment": "Способы оплаты", "returns": "Возврат" }
+    },
+    "social": { "telegram": "Telegram", "youtube": "YouTube", "instagram": "Instagram", "x": "X" }
   },
   "hero": {
     "bannerAria": "Главный баннер",
-    "slideAria": "Слайд {n}"
+    "slideAria": "Слайд {n}",
+    "previousSlideAria": "Предыдущий слайд",
+    "nextSlideAria": "Следующий слайд"
   },
   "navbar": {
     "brandName": "Shukufa",
@@ -89,8 +90,37 @@
     "imageAlt": "Цветы Shukufa"
   },
   "home": {
-    "title": "Самые красивые цветы для каждого момента",
-    "subtitle": "Закажите свежие и качественные цветы для своих близких уже сегодня."
+    "seeMore": "Смотреть ещё",
+    "bestSellers": {
+      "title": "Бестселлеры"
+    },
+    "offers": {
+      "title": "Специальные предложения",
+      "countdownLabel": "До конца предложения:"
+    },
+    "carouselPrevious": "Предыдущий слайд",
+    "carouselNext": "Следующий слайд",
+    "whyUsPhoto": {
+      "freshness": { "title": "Свежие каждый день", "description": "Мы выбираем цветы в лучшем состоянии." },
+      "delivery": { "title": "Бережная доставка", "description": "Букет прибудет красиво оформленным." },
+      "quality": { "title": "Надёжное качество", "description": "Продуманные цветы для каждого момента." },
+      "care": { "title": "С заботой", "description": "Каждый заказ готовится с душой." }
+    },
+    "whyUsIcons": {
+      "freshness": { "title": "Свежие цветы", "description": "Выбраны с заботой" },
+      "delivery": { "title": "Быстрая доставка", "description": "По всему городу" },
+      "support": { "title": "Дружелюбная поддержка", "description": "Мы рядом, когда нужно" }
+    },
+    "testimonials": {
+      "title": "Отзывы клиентов",
+      "purchasedProduct": "Купленный товар:",
+      "goToProduct": "Перейти к товару",
+      "items": {
+        "one": { "name": "Мадина Р.", "quote": "Букет оказался ещё красивее, чем на фото. Его доставили свежим и точно вовремя." },
+        "two": { "name": "Джеймс К.", "quote": "Прекрасный опыт заказа от начала до конца. Моя семья осталась в восторге." },
+        "three": { "name": "Дильноза А.", "quote": "Замечательные цветы и внимательный сервис. Обязательно закажу в Shukufa снова." }
+      }
+    }
   },
   "mobileTabBar": {
     "navAria": "Мобильная навигация",
@@ -125,7 +155,18 @@
     "order": "Оформить заказ",
     "description": "Описание",
     "reviews": "Отзывы ({count})",
-    "reviewsSoon": "Функция отзывов скоро появится.",
+    "verifiedBuyer": "Подтверждённый покупатель",
+    "noReviews": "Пока нет отзывов.",
+    "loadMoreReviews": "Показать ещё",
+    "loadingReviews": "Загрузка...",
+    "leaveReview": "Оставить отзыв",
+    "ratingLabel": "Оценка",
+    "ratingRequired": "Выберите оценку, чтобы продолжить.",
+    "commentLabel": "Комментарий (необязательно)",
+    "commentPlaceholder": "Напишите ваше мнение о товаре",
+    "submitReview": "Отправить отзыв",
+    "submittingReview": "Отправка...",
+    "reviewSubmitted": "Ваш отзыв отправлен.",
     "pageTitleSuffix": "Каталог",
     "pageTitleFallback": "Товар"
   },
@@ -149,10 +190,109 @@
     "galleryNextAria": "Следующее фото"
   },
   "catalog": {
+    "home": "Главная",
+    "catalogLabel": "Каталог",
+    "breadcrumbAria": "Хлебные крошки каталога",
+    "allProducts": "Все товары",
+    "searchResults": "Результаты поиска",
+    "searchTitle": "Поиск по запросу «{query}»",
+    "resultCount": "Найдено товаров: {count}",
+    "sort": "Сортировка",
+    "filter": "Фильтр",
+    "sortLowest": "Сначала дешёвые",
+    "sortHighest": "Сначала дорогие",
+    "sortNewest": "Новинки",
+    "sortBestSelling": "Бестселлеры",
+    "sortDiscount": "Максимальная скидка",
+    "price": "Цена",
+    "from": "От",
+    "to": "До",
+    "applyFilter": "Применить фильтр",
+    "clearCategory": "Очистить категорию",
     "categoryLabel": "Категория",
     "empty": "Пока нет товаров",
     "emptySubtitle": "Товары по категории «{category}» скоро появятся",
     "pageTitleFallback": "Каталог"
+  },
+  "cart": {
+    "title": "Корзина",
+    "pageTitle": "Корзина",
+    "itemCount": "{count} товар(ов)",
+    "itemsLabel": "Товары в корзине",
+    "emptyTitle": "Ваша корзина пуста",
+    "emptySubtitle": "Выберите любимые цветы и начните оформлять заказ.",
+    "backToCatalog": "Перейти в каталог",
+    "unavailable": "Этот товар больше недоступен, удалите его из корзины",
+    "removeAria": "Удалить товар",
+    "decreaseAria": "Уменьшить количество",
+    "increaseAria": "Увеличить количество",
+    "summaryTitle": "Итоги заказа",
+    "subtotal": "Промежуточная сумма",
+    "discount": "Скидка на товары",
+    "grandTotal": "Итого",
+    "continue": "Продолжить"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "pageTitle": "Оформление заказа",
+    "subtitle": "Введите данные для доставки",
+    "address": "Адрес доставки",
+    "addressPlaceholder": "Введите полный адрес",
+    "addressRequired": "Введите адрес",
+    "phone": "Номер телефона",
+    "phonePlaceholder": "+998901234567",
+    "phoneInvalid": "Номер телефона должен начинаться с +998 и содержать 9 цифр",
+    "note": "Комментарий",
+    "notePlaceholder": "Дополнительный комментарий к заказу (необязательно)",
+    "submit": "Оформить заказ",
+    "successTitle": "Заказ успешно оформлен",
+    "successMessage": "Ваш заказ принят. Мы свяжемся с вами в ближайшее время.",
+    "orderId": "Номер заказа",
+    "itemsTitle": "Состав заказа",
+    "total": "Итого",
+    "paymentStatus": {
+      "unpaid": "Не оплачено",
+      "paid": "Оплачено"
+    },
+    "deliveryStatus": {
+      "preparing": "Готовится",
+      "handed_to_courier": "Передан курьеру",
+      "delivered": "Доставлен",
+      "cancelled": "Отменён"
+    },
+    "continueShopping": "Продолжить покупки",
+    "viewOrder": "Посмотреть заказ"
+  },
+  "orders": {
+    "title": "Мои заказы",
+    "pageTitle": "Мои заказы",
+    "count": "Заказов: {count}",
+    "orderId": "Номер заказа",
+    "itemsCount": "Товаров: {count}",
+    "emptyTitle": "У вас пока нет заказов",
+    "emptySubtitle": "Выберите любимые цветы и оформите свой первый заказ.",
+    "backToCatalog": "Перейти в каталог",
+    "backToOrders": "Вернуться к моим заказам",
+    "detailTitle": "Детали заказа",
+    "detailPageTitle": "Детали заказа"
+  },
+  "wishlist": {
+    "title": "Избранное",
+    "pageTitle": "Избранное",
+    "itemCount": "{count} товар(ов)",
+    "emptyTitle": "В избранном пока пусто",
+    "emptySubtitle": "Сохраняйте понравившиеся цветы с помощью сердечка.",
+    "backToCatalog": "Перейти в каталог",
+    "loginRequired": "Войдите, чтобы добавить товар в избранное"
+  },
+  "gallery": {
+    "title": "Наши работы",
+    "pageTitle": "Наши работы",
+    "subtitle": "Посмотрите букеты и цветочные композиции Shukufa.",
+    "emptyTitle": "Галерея пока пуста",
+    "emptySubtitle": "Скоро здесь появятся наши новые работы.",
+    "previousPage": "Предыдущая страница",
+    "nextPage": "Следующая страница"
   },
   "auth": {
     "login": {
